@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YallaBuy Project OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+============================================================ */
+:root{
+  --bg:#f7f5f2; --surface:#ffffff; --surface2:#f1efea; --border:#e4e0d8; --border2:#d5d0c5;
+  --ink:#1d1c1a; --muted:#6f6b62; --faint:#a09b90;
+  --orange:#e35718; --orange-ink:#c24608; --orange-soft:#fdeee5; --orange-line:#f3c9ae;
+  --ok-ink:#1e7a3f; --ok-soft:#e4f3e8; --warn-ink:#9a6200; --warn-soft:#fbf1da;
+  --bad-ink:#b3261e; --bad-soft:#fbe9e7; --info-ink:#1d5f8a; --info-soft:#e3eef6;
+  --shadow:0 8px 32px rgba(28,26,22,.14);
+  --r:10px; --rs:7px;
+  --font:'IBM Plex Sans',sans-serif; --disp:'Sora',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+html[data-theme="dark"]{
+  --bg:#17181b; --surface:#1f2125; --surface2:#26282d; --border:#32353b; --border2:#3e4249;
+  --ink:#e9e6e0; --muted:#a29d93; --faint:#6e6a62;
+  --orange:#f0703a; --orange-ink:#f58a5e; --orange-soft:#33231a; --orange-line:#4d2f1d;
+  --ok-ink:#6fca8d; --ok-soft:#1c2b21; --warn-ink:#dcb35e; --warn-soft:#2d2517;
+  --bad-ink:#ef7b72; --bad-soft:#301d1b; --info-ink:#7db4da; --info-soft:#1a252e;
+  --shadow:0 8px 32px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--disp);letter-spacing:-.01em}
+a{color:var(--orange-ink)}
+button{font-family:var(--font);cursor:pointer}
+input,select,textarea{font-family:var(--font);font-size:13.5px;color:var(--ink)}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:4px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:6px;border:2px solid var(--bg)}
+.mono{font-family:var(--mono)}
+.micro{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+
+/* ============ LAYOUT ============ */
+.app{display:flex;min-height:100vh}
+.sidebar{width:236px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:60;transition:transform .18s ease}
+.main{flex:1;margin-left:236px;min-width:0;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px}
+.brand-mark{width:32px;height:32px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:#fff;font-family:var(--disp);font-weight:800;font-size:15px;flex-shrink:0}
+.brand-name{font-family:var(--disp);font-weight:700;font-size:14.5px;line-height:1.15}
+.brand-name small{display:block;font-family:var(--mono);font-weight:400;font-size:9.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.nav{flex:1;overflow-y:auto;padding:4px 10px 16px}
+.nav-group{margin-top:14px}
+.nav-label{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);padding:0 10px 5px}
+.nav a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--rs);color:var(--muted);
+  text-decoration:none;font-weight:500;font-size:13.5px;position:relative}
+.nav a svg{width:16px;height:16px;flex-shrink:0}
+.nav a:hover{background:var(--surface2);color:var(--ink)}
+.nav a.active{background:var(--orange-soft);color:var(--orange-ink)}
+.nav a.active::before{content:"";position:absolute;left:-10px;top:6px;bottom:6px;width:3px;border-radius:0 3px 3px 0;background:var(--orange)}
+.nav-count{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+.side-foot{border-top:1px solid var(--border);padding:10px;display:flex;gap:8px}
+
+.topbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:10px 24px;min-height:58px}
+.view{padding:24px;max-width:1240px;width:100%;margin:0 auto}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.page-head h1{font-size:22px;font-weight:700}
+.page-head p{color:var(--muted);margin-top:2px;max-width:640px}
+.head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ============ COMPONENTS ============ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);
+  background:var(--surface);color:var(--ink);font-weight:600;font-size:13px;transition:background .12s}
+.btn:hover{background:var(--surface2)}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-ink);border-color:var(--orange-ink)}
+html[data-theme="dark"] .btn-primary:hover{background:#d95f27}
+.btn-danger{color:var(--bad-ink);border-color:var(--bad-ink)}
+.btn-danger:hover{background:var(--bad-soft)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn-ghost:hover{background:var(--surface2);color:var(--ink)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.icon-btn{width:32px;height:32px;display:inline-grid;place-items:center;border-radius:var(--rs);border:1px solid transparent;background:transparent;color:var(--muted)}
+.icon-btn:hover{background:var(--surface2);color:var(--ink)}
+.icon-btn svg{width:16px;height:16px}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:600;
+  background:var(--surface2);color:var(--muted);border:1px solid var(--border);white-space:nowrap}
+.badge.tone-orange{background:var(--orange-soft);color:var(--orange-ink);border-color:var(--orange-line)}
+.badge.tone-ok{background:var(--ok-soft);color:var(--ok-ink);border-color:transparent}
+.badge.tone-warn{background:var(--warn-soft);color:var(--warn-ink);border-color:transparent}
+.badge.tone-bad{background:var(--bad-soft);color:var(--bad-ink);border-color:transparent}
+.badge.tone-info{background:var(--info-soft);color:var(--info-ink);border-color:transparent}
+.badge.tone-ink{background:var(--ink);color:var(--bg);border-color:transparent}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border)}
+.card-head h3{font-size:13.5px;font-weight:700}
+.card-body{padding:16px}
+.pbar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.pbar>span{display:block;height:100%;background:var(--orange);border-radius:99px;transition:width .25s}
+.pbar.p-ok>span{background:var(--ok-ink)}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+.field input,.field select,.field textarea{background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);padding:8px 10px;width:100%}
+.field textarea{resize:vertical;min-height:74px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);outline:none;box-shadow:0 0 0 3px var(--orange-soft)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form-grid .span2{grid-column:1/-1}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar .search-inline{position:relative;flex:1;min-width:180px}
+.toolbar .search-inline input{width:100%;padding:8px 10px 8px 32px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs)}
+.toolbar .search-inline svg{position:absolute;left:9px;top:9px;width:15px;height:15px;color:var(--faint)}
+.toolbar select{padding:7px 9px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs);max-width:170px}
+
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:500}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--surface2)}
+td.t-title{font-weight:600;max-width:340px}
+td .sub{display:block;font-weight:400;font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+.due-over{color:var(--bad-ink);font-weight:600}
+@media(max-width:640px){
+  table{min-width:0}
+  thead{display:none}
+  tr{display:block;border-bottom:1px solid var(--border);padding:6px 0}
+  td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:none;padding:5px 14px}
+  td::before{content:attr(data-label);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint)}
+  td.t-title{flex-direction:column;align-items:flex-start;gap:2px}
+  td.t-title::before{margin-bottom:2px}
+}
+
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
+.stat b{display:block;font-family:var(--disp);font-size:23px;font-weight:700;margin-top:2px}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* focus panel */
+.focus-panel{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:26px 28px;position:relative;overflow:hidden}
+html[data-theme="dark"] .focus-panel{background:#111214;color:#e9e6e0}
+.focus-panel .micro{color:var(--orange)}
+.focus-panel h2{font-size:clamp(19px,2.6vw,27px);font-weight:800;margin:8px 0 4px;letter-spacing:-.02em}
+.focus-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.focus-meta .fm{font-family:var(--mono);font-size:11.5px;opacity:.75}
+.focus-panel .pbar{background:rgba(255,255,255,.16);margin-top:16px}
+.focus-panel .pbar span{background:var(--orange)}
+.focus-side{position:absolute;right:26px;top:50%;transform:translateY(-50%);text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.focus-side .pct{font-family:var(--disp);font-weight:800;font-size:34px;color:var(--orange)}
+@media(max-width:700px){.focus-side{position:static;transform:none;flex-direction:row;margin-top:14px;align-items:center}}
+
+.dash-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:960px){.dash-grid{grid-template-columns:1fr}}
+.prio-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:1100px){.prio-cols{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.prio-cols{grid-template-columns:1fr}}
+.prio-col .micro{display:block;padding:8px 10px 6px}
+.prio-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;margin-bottom:8px;cursor:pointer}
+.prio-item:hover{border-color:var(--border2);background:var(--surface2)}
+.prio-item b{display:block;font-size:12.5px;font-weight:600}
+.prio-item span{font-size:11px;color:var(--faint)}
+.act-item{display:flex;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);font-size:12.5px}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:99px;background:var(--orange);margin-top:6px;flex-shrink:0}
+.act-item time{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap}
+
+.proj-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.proj-row:last-child{border-bottom:none}
+.proj-row:hover{background:var(--surface2)}
+.proj-row .pr-name{font-weight:600;flex:1;min-width:120px}
+.proj-row .pr-name small{display:block;font-weight:400;color:var(--faint);font-size:11px}
+.proj-row .pbar{width:130px;flex-shrink:0}
+
+/* kanban */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:start}
+@media(max-width:900px){.kanban{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.kanban{grid-template-columns:1fr}}
+.kb-col{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;min-height:120px}
+.kb-col.drag-over{outline:2px dashed var(--orange);outline-offset:-2px}
+.kb-col .kb-head{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 8px}
+.kb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 11px;margin-bottom:8px;cursor:grab}
+.kb-card:hover{border-color:var(--border2)}
+.kb-card:active{cursor:grabbing}
+.kb-card b{font-size:12.5px;font-weight:600;display:block;margin-bottom:6px}
+.kb-card .kb-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.tabs button{padding:8px 14px;border:none;background:none;font-weight:600;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.active{color:var(--orange-ink);border-bottom-color:var(--orange)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(20,18,15,.5);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px 16px;overflow-y:auto;animation:fadeIn .12s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;max-width:620px;box-shadow:var(--shadow);animation:slideUp .14s ease}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-size:15px}
+.modal-body{padding:20px}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+.modal.wide{max-width:760px}
+.dl{display:grid;grid-template-columns:150px 1fr;gap:7px 14px;font-size:13px}
+.dl dt{color:var(--faint);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;padding-top:2px}
+.dl dd{min-width:0;overflow-wrap:break-word}
+.rel-group{margin-top:8px}
+.rel-group .micro{display:block;margin-bottom:6px}
+.rel-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:6px;cursor:pointer;font-size:12.5px}
+.rel-item:hover{background:var(--surface2)}
+.rel-item svg{width:13px;height:13px;color:var(--faint);flex-shrink:0}
+.check-line{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px}
+.check-line.done{color:var(--faint);text-decoration:line-through}
+.check-line input{accent-color:var(--orange);width:15px;height:15px}
+.score-ring{font-family:var(--disp);font-weight:800;font-size:22px}
+
+/* search dropdown + results */
+.gsearch{position:relative;flex:1;max-width:440px}
+.gsearch input{width:100%;padding:8px 12px 8px 34px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface)}
+.gsearch>svg{position:absolute;left:10px;top:9px;width:16px;height:16px;color:var(--faint)}
+.gsearch kbd{position:absolute;right:9px;top:8px;font-family:var(--mono);font-size:10px;color:var(--faint);border:1px solid var(--border2);border-radius:4px;padding:1px 5px}
+.gs-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);max-height:420px;overflow-y:auto;z-index:90}
+.gs-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}
+.gs-item:last-child{border-bottom:none}
+.gs-item:hover{background:var(--surface2)}
+.gs-item .gst{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);width:74px;flex-shrink:0}
+.gs-item b{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* quick add menu */
+.qa-wrap{position:relative}
+.qa-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);min-width:200px;z-index:90;padding:5px}
+.qa-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:8px 11px;border:none;background:none;text-align:left;border-radius:var(--rs);font-size:13px;font-weight:500;color:var(--ink)}
+.qa-menu button:hover{background:var(--orange-soft);color:var(--orange-ink)}
+.qa-menu button svg{width:15px;height:15px;color:var(--faint)}
+.qa-menu button:hover svg{color:var(--orange-ink)}
+
+/* toast */
+#toast-root{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;max-width:min(360px,calc(100vw - 40px))}
+.toast{background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:var(--rs);font-size:13px;font-weight:500;
+  box-shadow:var(--shadow);display:flex;gap:9px;align-items:center;animation:slideUp .16s ease}
+.toast.err{background:var(--bad-ink);color:#fff}
+.toast.ok::before{content:"";width:8px;height:8px;border-radius:99px;background:#5ad188;flex-shrink:0}
+.toast.err::before{content:"";width:8px;height:8px;border-radius:99px;background:#ffd3cf;flex-shrink:0}
+
+/* empty state */
+.empty{text-align:center;padding:52px 20px;color:var(--muted)}
+.empty svg{width:36px;height:36px;color:var(--faint);margin-bottom:12px}
+.empty h3{font-size:15px;color:var(--ink);margin-bottom:4px}
+.empty p{font-size:13px;margin-bottom:16px}
+
+.backdrop-dim{position:fixed;inset:0;background:rgba(20,18,15,.4);z-index:55;display:none}
+.scrim-show{display:block}
+.filter-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ftag{font-size:11.5px;padding:3px 10px;border-radius:99px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer}
+.ftag.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.review-block{margin-bottom:12px}
+.review-block label{display:block;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:4px}
+.review-block textarea{width:100%;min-height:58px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);padding:8px 10px;resize:vertical}
+.horizon-tabs{display:flex;gap:8px;margin-bottom:14px}
+.goal-card{padding:14px 16px;border-bottom:1px solid var(--border)}
+.goal-card:last-child{border-bottom:none}
+.goal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}
+.goal-top b{font-size:13.5px}
+.goal-meta{display:flex;gap:10px;align-items:center;font-size:11.5px;color:var(--faint);margin-top:7px;flex-wrap:wrap}
+
+/* ============ RESPONSIVE SHELL ============ */
+.menu-btn{display:none}
+@media(max-width:920px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow)}
+  .sidebar.open{transform:none}
+  .main{margin-left:0}
+  .menu-btn{display:inline-grid}
+  .view{padding:16px 14px}
+  .topbar{padding:10px 14px}
+  .gsearch kbd{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .dl{grid-template-columns:1fr}
+  .dl dt{margin-top:6px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">Y</div>
+      <div class="brand-name">YallaBuy<small>Project OS</small></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <button class="btn btn-ghost btn-sm" data-action="theme" id="theme-btn" style="flex:1;justify-content:center"></button>
+      <button class="btn btn-ghost btn-sm" data-nav="settings" style="flex:1;justify-content:center;display:inline-flex;align-items:center;gap:6px">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+  </aside>
+  <div class="backdrop-dim" id="scrim" data-action="close-side"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" data-action="open-side" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="gsearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="search" id="gsearch-input" placeholder="Search everything…" aria-label="Global search" autocomplete="off">
+        <kbd>/</kbd>
+        <div class="gs-panel" id="gsearch-panel" hidden></div>
+      </div>
+      <div class="qa-wrap" style="margin-left:auto">
+        <button class="btn btn-primary" data-action="quickadd">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+          Quick Add
+        </button>
+        <div class="qa-menu" id="qa-menu" hidden></div>
+      </div>
+    </header>
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root" aria-live="polite"></div>
+<input type="file" id="import-file" accept=".json,application/json" hidden>
+
+<script>
+"use strict";
+/* ================================================================
+   1. STATE
+================================================================ */
+const STORE_KEY = "yallabuy_os_v1";
+let state = null;
+const ui = {
+  filters: {},          // per-collection filter state
+  taskView: "list",     // list | kanban
+  seoTab: "all",
+  goalTab: "Short-Term",
+  searchQ: "",
+  gsOpen: false,
+};
+
+/* ================================================================
+   2. STORAGE
+================================================================ */
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ toast("Could not save data (storage full or blocked).", "err"); }
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw){ state = seedData(); saveState(); return; }
+    const parsed = JSON.parse(raw);
+    if(!parsed || typeof parsed !== "object" || !Array.isArray(parsed.projects)) throw new Error("bad shape");
+    state = parsed;
+    // guarantee every collection exists
+    ["projects","tasks","ideas","content","features","seo","bugs","notes","research","goals","decisions","reviews","activity","tags"].forEach(k=>{
+      if(!Array.isArray(state[k])) state[k] = [];
+    });
+    if(!state.settings) state.settings = {};
+  }catch(e){
+    state = seedData();
+    try{ saveState(); }catch(_){}
+    setTimeout(()=>toast("Stored data was corrupted — restored demo data.","err"), 400);
+  }
+}
+
+/* ================================================================
+   3. UTILITIES
+================================================================ */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = p => p + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const $  = s => document.querySelector(s);
+const byId = (coll, id) => (state[coll]||[]).find(x => x.id === id) || null;
+const nameOf = (coll, id) => { const o = byId(coll, id); return o ? (o.title || o.name || "—") : "—"; };
+const projLabel = id => { const p = byId("projects", id); return p ? (p.name || p.title) : null; };
+function fmtDate(ts){
+  if(!ts) return "—";
+  const d = new Date(ts); if(isNaN(d)) return "—";
+  return d.toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"});
+}
+function timeAgo(ts){
+  if(!ts) return "";
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s<60) return "just now";
+  if(s<3600) return Math.floor(s/60)+"m ago";
+  if(s<86400) return Math.floor(s/3600)+"h ago";
+  if(s<604800) return Math.floor(s/86400)+"d ago";
+  return fmtDate(ts);
+}
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+const PRIOS = ["Critical","High","Medium","Low"];
+const PRIO_W = {Critical:0, High:1, Medium:2, Low:3};
+function toneFor(s){
+  const t = String(s||"").toLowerCase();
+  if(/(done|published|resolved|completed|released|accepted|active|closed|ready|good)/.test(t)) return "ok";
+  if(/(critical|high|open|missing|broken|needs update|investigating|fixing|rejected|cancelled|slow|lcp|cls)/.test(t)) return /critical|broken|missing/.test(t) ? "bad" : "warn";
+  if(/(in progress|writing|building|researching|evaluating|testing|review|editing|planned|planning|todo|proposed)/.test(t)) return "orange";
+  if(/(medium|partial|pending|paused|superseded)/.test(t)) return "warn";
+  if(/(low|backlog|inbox|idea|archived|none)/.test(t)) return "";
+  return "info";
+}
+function badge(txt, tone){ if(!txt) return "—"; return `<span class="badge ${tone ? "tone-"+tone : ("tone-"+(toneFor(txt)||""))}">${esc(txt)}</span>`; }
+function pbar(pct, ok){
+  const v = Math.max(0, Math.min(100, Number(pct)||0));
+  return `<div class="pbar ${ok?"p-ok":""}" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100"><span style="width:${v}%"></span></div>`;
+}
+/* tiny icon factory */
+const ICONS = {
+  dash:'<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',
+  folder:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  task:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="m8 12 3 3 5-6"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+  feature:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+  seo:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M8 11h6M11 8v6"/>',
+  bug:'<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2M5 7l3 2M19 19l-3-2M5 19l3-2M4 13h4M16 13h4M12 6V3"/>',
+  note:'<path d="M4 4h16v12l-4 4H4z"/><path d="M16 20v-4h4"/>',
+  research:'<circle cx="9" cy="9" r="6"/><path d="m13.5 13.5 7 7M4 9h10M9 4v10"/>',
+  goal:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>',
+  decision:'<path d="M12 3v18M5 7l7-4 7 4M5 7v6a4 4 0 0 0 4 4M19 7v6a4 4 0 0 1-4 4"/>',
+  review:'<path d="M21 12a9 9 0 1 1-2.6-6.3M21 3v6h-6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  edit:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>',
+  trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M10 11v6M14 11v6"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/>',
+};
+const icon = (n, cls) => `<svg class="${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||""}</svg>`;
+function emptyState(iconName, title, text, btnLabel, navTarget){
+  return `<div class="empty">${icon(iconName)}<h3>${esc(title)}</h3><p>${esc(text)}</p>
+    ${btnLabel ? `<button class="btn btn-primary" data-action="add" data-coll="${navTarget}">${icon("plus")}${esc(btnLabel)}</button>` : ""}</div>`;
+}
+
+/* ================================================================
+   4. DATA MODELS — SCHEMA REGISTRY
+================================================================ */
+const OPT = {
+  projectStatus:["Planning","Active","Paused","Completed","Archived"],
+  taskStatus:["Backlog","Todo","In Progress","Review","Done","Cancelled"],
+  prio:PRIOS,
+  ideaStatus:["Inbox","Evaluating","Planned","In Progress","Completed","Rejected","Archived"],
+  contentType:["Article","Product Review","Buying Guide","Comparison","Product Page","Category Content","FAQ"],
+  contentStatus:["Idea","Researching","Writing","Editing","SEO Review","Ready","Published","Needs Update","Archived"],
+  seoQuality:["Missing","Partial","Good"],
+  linking:["None","Partial","Complete"],
+  affiliate:["None","Pending","Active"],
+  intent:["Informational","Commercial","Transactional","Navigational"],
+  featureStatus:["Idea","Planning","Building","Testing","Released","Paused","Cancelled"],
+  seoKind:[["task","SEO Task"],["opportunity","Content Opportunity"],["page","Page To Improve"],["tech","Technical Issue"],["keyword","Keyword Idea"]],
+  techType:["Broken links","Missing metadata","Missing schema","Slow page","LCP issue","CLS issue","Internal linking issue","Duplicate content"],
+  seoStatus:["Open","In Progress","Done","Won't Fix"],
+  severity:["Critical","High","Medium","Low"],
+  bugStatus:["Open","Investigating","Fixing","Testing","Resolved","Closed"],
+  noteCat:["General","Development","SEO","Content","Business","Research","Performance"],
+  researchCat:["Products","SEO","Competition","Technology","Affiliate","Users","Other"],
+  horizon:["Short-Term","Medium-Term","Long-Term"],
+  goalStatus:["Active","Achieved","Paused","Dropped"],
+  decisionStatus:["Proposed","Accepted","Superseded","Rejected"],
+};
+const ONE2FIVE = ["1","2","3","4","5"];
+
+const SCHEMAS = {
+  projects:{ label:"Projects", singular:"Project", icon:"folder", intro:"Large areas of work — the backbone of everything else.",
+    fields:[
+      {k:"name",l:"Name",t:"text",req:1},
+      {k:"status",l:"Status",t:"sel",opts:OPT.projectStatus,def:"Planning"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"progress",l:"Progress %",t:"num",def:0},
+      {k:"startDate",l:"Start date",t:"date"},
+      {k:"targetDate",l:"Target date",t:"date"},
+      {k:"description",l:"Description",t:"textarea",span:2},
+    ],
+    cols:[{k:"name",l:"Name",title:1},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"progress",l:"Progress",t:"pbar"},{k:"targetDate",l:"Target",t:"date"}]},
+
+  tasks:{ label:"Tasks", singular:"Task", icon:"task", prioField:"priority", projField:"projectId", statusField:"status",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"status",l:"Status",t:"sel",opts:OPT.taskStatus,def:"Todo"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"projectId",l:"Project",t:"proj"},
+      {k:"category",l:"Category",t:"text"},
+      {k:"tags",l:"Tags",t:"tags"},
+      {k:"dueDate",l:"Due date",t:"date"},
+      {k:"estimate",l:"Estimated effort (h)",t:"num"},
+      {k:"checklist",l:"Checklist — one per line, [x] = done",t:"textarea",span:2},
+      {k:"description",l:"Description",t:"textarea",span:2},
+      {k:"notes",l:"Notes",t:"textarea",span:2},
+      {k:"ideaId",l:"Related idea",t:"ref",from:"ideas"},
+      {k:"featureId",l:"Related feature",t:"ref",from:"features"},
+      {k:"bugId",l:"Related bug",t:"ref",from:"bugs"},
+    ],
+    cols:[{k:"title",l:"Task",title:1},{k:"projectId",l:"Project",t:"proj"},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"dueDate",l:"Due",t:"due"}]},
+
+  ideas:{ label:"Ideas", singular:"Idea", icon:"bulb", intro:"Capture everything here — but ideas never become tasks automatically. Evaluate first.",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"status",l:"Status",t:"sel",opts:OPT.ideaStatus,def:"Inbox"},
+      {k:"category",l:"Category",t:"text"},
+      {k:"projectId",l:"Related project",t:"proj"},
+      {k:"impact",l:"Impact (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"importance",l:"Importance (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"urgency",l:"Urgency (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"effort",l:"Effort (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"description",l:"Description",t:"textarea",span:2},
+      {k:"notes",l:"Notes",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Idea",title:1},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"_score",l:"Score",t:"score"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  content:{ label:"Content", singular:"Content Item", icon:"doc", intro:"Articles, reviews, guides — the heart of YallaBuy.",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"type",l:"Type",t:"sel",opts:OPT.contentType,def:"Article"},
+      {k:"status",l:"Status",t:"sel",opts:OPT.contentStatus,def:"Idea"},
+      {k:"keyword",l:"Target keyword",t:"text"},
+      {k:"intent",l:"Search intent",t:"sel",opts:OPT.intent,def:"Commercial"},
+      {k:"category",l:"Site category",t:"text"},
+      {k:"projectId",l:"Project",t:"proj"},
+      {k:"targetWords",l:"Target word count",t:"num"},
+      {k:"wordCount",l:"Actual word count",t:"num"},
+      {k:"seoStatus",l:"SEO status",t:"sel",opts:OPT.seoQuality,def:"Missing"},
+      {k:"internalLinking",l:"Internal linking",t:"sel",opts:OPT.linking,def:"None"},
+      {k:"affiliate",l:"Affiliate status",t:"sel",opts:OPT.affiliate,def:"None"},
+      {k:"publishedDate",l:"Published date",t:"date"},
+      {k:"amazonUrl",l:"Amazon URL (manual)",t:"text",span:2},
+      {k:"relatedProducts",l:"Related products",t:"text",span:2},
+      {k:"notes",l:"Notes",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Title",title:1},{k:"type",l:"Type"},{k:"status",l:"Status"},{k:"keyword",l:"Keyword"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  features:{ label:"Features", singular:"Feature", icon:"feature", prioField:"priority", projField:"projectId",
+    fields:[
+      {k:"title",l:"Name",t:"text",req:1,span:2},
+      {k:"projectId",l:"Project",t:"proj"},
+      {k:"status",l:"Status",t:"sel",opts:OPT.featureStatus,def:"Idea"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"impact",l:"Impact (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"difficulty",l:"Difficulty (1–5)",t:"sel",opts:ONE2FIVE,def:"3"},
+      {k:"progress",l:"Progress %",t:"num",def:0},
+      {k:"description",l:"Description",t:"textarea",span:2},
+      {k:"notes",l:"Notes",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Feature",title:1},{k:"projectId",l:"Project",t:"proj"},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"progress",l:"Progress",t:"pbar"}]},
+
+  seo:{ label:"SEO Center", singular:"SEO Record", icon:"seo", intro:"Manual SEO workspace — enter your own data from Search Console & audits. Nothing here is fetched automatically.",
+    fields:[
+      {k:"title",l:"Keyword / Title",t:"text",req:1,span:2},
+      {k:"kind",l:"Record type",t:"sel",opts:OPT.seoKind,def:"task"},
+      {k:"status",l:"Status",t:"sel",opts:OPT.seoStatus,def:"Open"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"intent",l:"Search intent",t:"sel",opts:OPT.intent,def:"Informational"},
+      {k:"difficulty",l:"Keyword difficulty (1–100)",t:"num"},
+      {k:"targetPage",l:"Target page / URL",t:"text",span:2},
+      {k:"issueType",l:"Issue type (for technical issues)",t:"sel",opts:OPT.techType},
+      {k:"notes",l:"Notes (manual metrics, position, clicks…)",t:"textarea",span:2},
+      {k:"projectId",l:"Project",t:"proj"},
+    ],
+    cols:[{k:"title",l:"Keyword / Title",title:1},{k:"kind",l:"Type",t:"kind"},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  bugs:{ label:"Bugs", singular:"Bug", icon:"bug", prioField:"severity", projField:"projectId",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"severity",l:"Severity",t:"sel",opts:OPT.severity,def:"Medium"},
+      {k:"status",l:"Status",t:"sel",opts:OPT.bugStatus,def:"Open"},
+      {k:"projectId",l:"Project",t:"proj"},
+      {k:"taskId",l:"Related task",t:"ref",from:"tasks"},
+      {k:"pageUrl",l:"Page URL",t:"text",span:2},
+      {k:"steps",l:"Steps to reproduce",t:"textarea",span:2},
+      {k:"expected",l:"Expected behavior",t:"textarea"},
+      {k:"actual",l:"Actual behavior",t:"textarea"},
+      {k:"browser",l:"Browser / device",t:"text"},
+      {k:"notes",l:"Notes",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Bug",title:1},{k:"severity",l:"Severity"},{k:"status",l:"Status"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  notes:{ label:"Notes", singular:"Note", icon:"note", projField:"projectId",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"category",l:"Category",t:"sel",opts:OPT.noteCat,def:"General"},
+      {k:"tags",l:"Tags",t:"tags"},
+      {k:"projectId",l:"Related project",t:"proj"},
+      {k:"taskId",l:"Related task",t:"ref",from:"tasks"},
+      {k:"content",l:"Content",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Note",title:1},{k:"category",l:"Category"},{k:"tags",l:"Tags",t:"tags"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  research:{ label:"Research", singular:"Research Item", icon:"research", projField:"projectId",
+    fields:[
+      {k:"title",l:"Question / Title",t:"text",req:1,span:2},
+      {k:"category",l:"Category",t:"sel",opts:OPT.researchCat,def:"Products"},
+      {k:"projectId",l:"Related project",t:"proj"},
+      {k:"ideaId",l:"Related idea",t:"ref",from:"ideas"},
+      {k:"date",l:"Date",t:"date"},
+      {k:"findings",l:"Findings",t:"textarea",span:2},
+      {k:"conclusion",l:"Conclusion",t:"textarea",span:2},
+      {k:"sources",l:"Sources (one per line)",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Research",title:1},{k:"category",l:"Category"},{k:"conclusion",l:"Conclusion",t:"trim"},{k:"projectId",l:"Project",t:"proj"}]},
+
+  goals:{ label:"Goals", singular:"Goal", icon:"goal", prioField:"priority",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"horizon",l:"Horizon",t:"sel",opts:OPT.horizon,def:"Short-Term"},
+      {k:"status",l:"Status",t:"sel",opts:OPT.goalStatus,def:"Active"},
+      {k:"priority",l:"Priority",t:"sel",opts:OPT.prio,def:"Medium"},
+      {k:"targetDate",l:"Target date",t:"date"},
+      {k:"progress",l:"Progress %",t:"num",def:0},
+      {k:"projectIds",l:"Related projects (multi-select)",t:"multi",span:2},
+      {k:"description",l:"Description",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Goal",title:1},{k:"horizon",l:"Horizon"},{k:"status",l:"Status"},{k:"priority",l:"Priority"},{k:"progress",l:"Progress",t:"pbar"}]},
+
+  decisions:{ label:"Decisions", singular:"Decision", icon:"decision", projField:"projectId",
+    fields:[
+      {k:"title",l:"Title",t:"text",req:1,span:2},
+      {k:"status",l:"Status",t:"sel",opts:OPT.decisionStatus,def:"Proposed"},
+      {k:"projectId",l:"Related project",t:"proj"},
+      {k:"decision",l:"Decision",t:"textarea",span:2},
+      {k:"reason",l:"Reason",t:"textarea",span:2},
+      {k:"alternatives",l:"Alternatives considered",t:"textarea",span:2},
+    ],
+    cols:[{k:"title",l:"Decision",title:1},{k:"status",l:"Status"},{k:"decision",l:"Decision",t:"trim"},{k:"projectId",l:"Project",t:"proj"}]},
+};
+const COLLECTIONS = ["projects","tasks","ideas","content","features","seo","bugs","notes","research","goals","decisions"];
+
+/* ================================================================
+   5. CRUD + ACTIVITY
+================================================================ */
+function logAct(action, type, title){
+  state.activity.unshift({id:uid("a"), action, type, title, ts:Date.now()});
+  if(state.activity.length > 150) state.activity.length = 150;
+}
+function saveItem(coll, data, id){
+  const now = Date.now();
+  if(id){
+    const item = byId(coll, id);
+    if(!item){ toast("Item no longer exists.","err"); return null; }
+    ["status","priority","severity"].forEach(f=>{
+      if(data[f] && item[f] && data[f] !== item[f]) logAct("Status changed","SCHEMAS"&&coll, `${item.title||item.name}: ${item[f]} → ${data[f]}`);
+    });
+    Object.assign(item, data, {updatedAt:now});
+    logAct("Updated", coll, item.title || item.name);
+    saveState(); toast("Saved.");
+    return item;
+  }
+  const item = Object.assign({id:uid(coll.slice(0,2)), createdAt:now, updatedAt:now}, data);
+  state[coll].unshift(item);
+  logAct("Created", coll, item.title || item.name);
+  saveState(); toast((SCHEMAS[coll].singular) + " created.");
+  return item;
+}
+function deleteItem(coll, id){
+  const item = byId(coll, id);
+  if(!item) return;
+  confirmDlg(`Delete this ${SCHEMAS[coll].singular.toLowerCase()}?`, `"${item.title||item.name}" will be permanently removed. Related records keep working but lose this link.`, ()=>{
+    state[coll] = state[coll].filter(x=>x.id!==id);
+    logAct("Deleted", coll, item.title || item.name);
+    saveState(); toast("Deleted.");
+    closeModal(); rerender();
+  });
+}
+/* Priority heuristic — normalized 0–100. A productivity hint, not magic. */
+function ideaScore(i){
+  const e = Math.max(1, Number(i.effort)||1);
+  return Math.round(((Number(i.impact)||0)+(Number(i.importance)||0)+(Number(i.urgency)||0)) / e / 15 * 100);
+}
+function scoreBadge(i){
+  const s = ideaScore(i);
+  const tone = s>=75?"tone-bad":s>=55?"tone-orange":s>=35?"tone-warn":"";
+  const sug = s>=75?"Critical":s>=55?"High":s>=35?"Medium":"Low";
+  return `<span class="badge ${tone}" title="Suggested priority: ${sug} — (Impact+Importance+Urgency)/Effort heuristic"><span class="score-ring" style="font-size:12px">${s}</span>&nbsp;· ${sug}</span>`;
+}
+
+/* ================================================================
+   6. ROUTING
+================================================================ */
+const NAV = [
+  {group:"Work", items:[["dashboard","Dashboard","dash"],["projects","Projects","folder"],["tasks","Tasks","task"],["ideas","Ideas","bulb"]]},
+  {group:"Build & Content", items:[["content","Content","doc"],["features","Features","feature"],["seo","SEO Center","seo"],["bugs","Bugs","bug"]]},
+  {group:"Knowledge", items:[["notes","Notes","note"],["research","Research","research"],["goals","Goals","goal"],["decisions","Decisions","decision"],["review","Weekly Review","review"]]},
+];
+function navCount(key){
+  switch(key){
+    case "tasks": return state.tasks.filter(t=>!["Done","Cancelled"].includes(t.status)).length;
+    case "ideas": return state.ideas.filter(i=>["Inbox","Evaluating"].includes(i.status)).length;
+    case "bugs": return state.bugs.filter(b=>!["Resolved","Closed"].includes(b.status)).length;
+    case "dashboard": case "review": case "settings": return "";
+    default: return state[key] ? state[key].length : "";
+  }
+}
+function buildNav(){
+  const cur = (location.hash || "#/dashboard").replace("#/","").split("?")[0];
+  $("#nav").innerHTML = NAV.map(g=>`
+    <div class="nav-group"><div class="nav-label">${g.group}</div>
+      ${g.items.map(([key,label,ic])=>`
+        <a href="#/${key}" class="${cur===key?"active":""}" data-navkey="${key}">${icon(ic)}${label}${navCount(key)!==""?`<span class="nav-count">${navCount(key)}</span>`:""}</a>`).join("")}
+    </div>`).join("");
+}
+function rerender(){ router(); buildNav(); }
+window.addEventListener("hashchange", ()=>{ closeModal(); closeMenus(); router(); buildNav(); closeSidebar(); });
+function router(){
+  const route = (location.hash || "#/dashboard").replace("#/","").split("?")[0];
+  const views = {dashboard:vDashboard, projects:vCollection, tasks:vTasks, ideas:vCollection, content:vCollection,
+    features:vCollection, seo:vSeo, bugs:vCollection, notes:vCollection, research:vCollection, goals:vGoals,
+    decisions:vCollection, review:vReview, search:vSearch, settings:vSettings};
+  (views[route] || vDashboard)();
+  $("#view").scrollTop = 0; window.scrollTo(0,0);
+}
+
+/* ================================================================
+   7. UI PRIMITIVES — modal / confirm / toast / menus
+================================================================ */
+function openModal(html, opts){
+  closeModal();
+  const ov = document.createElement("div");
+  ov.className = "overlay"; ov.id = "overlay";
+  ov.innerHTML = `<div class="modal ${opts&&opts.wide?"wide":""}" role="dialog" aria-modal="true">${html}</div>`;
+  ov.addEventListener("mousedown", e=>{ if(e.target===ov) closeModal(); });
+  $("#modal-root").appendChild(ov);
+  const f = ov.querySelector("input,textarea,select,button.btn");
+  if(f) setTimeout(()=>f.focus(), 30);
+  return ov;
+}
+function closeModal(){ const m = $("#overlay"); if(m) m.remove(); }
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeModal(); closeMenus(); closeSidebar(); }
+  if(e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName)){ e.preventDefault(); $("#gsearch-input").focus(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); $("#gsearch-input").focus(); }
+});
+function confirmDlg(title, message, onYes){
+  openModal(`
+    <div class="modal-head"><h3>${esc(title)}</h3><button class="icon-btn" data-action="close-modal" aria-label="Close">${icon("x")}</button></div>
+    <div class="modal-body" style="color:var(--muted)">${esc(message)}</div>
+    <div class="modal-foot">
+      <button class="btn" data-action="close-modal">Cancel</button>
+      <button class="btn btn-danger" data-action="confirm-yes" id="confirm-yes">${icon("trash")}Confirm</button>
+    </div>`);
+  $("#confirm-yes").onclick = onYes;
+}
+function toast(msg, type){
+  const t = document.createElement("div");
+  t.className = "toast " + (type||"ok");
+  t.textContent = msg;
+  $("#toast-root").appendChild(t);
+  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function closeMenus(){ $("#qa-menu").hidden = true; $("#gsearch-panel").hidden = true; ui.gsOpen = false; }
+function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#scrim").classList.remove("scrim-show"); }
+function openSidebar(){ $("#sidebar").classList.add("open"); $("#scrim").classList.add("scrim-show"); }
+
+/* ================================================================
+   8. FORMS (generic, schema-driven)
+================================================================ */
+function optionsFor(f, current){
+  if(f.t === "sel") return f.opts.map(o=>{ const [v,l] = Array.isArray(o)?[o[0],o[1]]:[o,o];
+    return `<option value="${esc(v)}" ${String(current)===String(v)?"selected":""}>${esc(l)}</option>`; }).join("");
+  if(f.t === "proj"){ const opts = state.projects.map(p=>`<option value="${p.id}" ${current===p.id?"selected":""}>${esc(p.name)}</option>`).join("");
+    return `<option value="">— none —</option>` + opts; }
+  if(f.t === "ref"){ const opts = (state[f.from]||[]).map(x=>`<option value="${x.id}" ${current===x.id?"selected":""}>${esc((x.title||x.name||"").slice(0,60))}</option>`).join("");
+    return `<option value="">— none —</option>` + opts; }
+  if(f.t === "multi"){ const cur = Array.isArray(current)?current:[];
+    return state.projects.map(p=>`<option value="${p.id}" ${cur.includes(p.id)?"selected":""}>${esc(p.name)}</option>`).join(""); }
+  return "";
+}
+function fieldHTML(f, val){
+  const id = `f_${f.k}`, span = f.span ? "span2" : "";
+  let ctrl = "";
+  switch(f.t){
+    case "text": ctrl = `<input id="${id}" type="text" value="${esc(val??f.def??"")}" ${f.req?"required":""}>`; break;
+    case "num": ctrl = `<input id="${id}" type="number" min="0" value="${esc(val??f.def??"")}">`; break;
+    case "date": ctrl = `<input id="${id}" type="date" value="${esc(val? String(val).slice(0,10):"")}">`; break;
+    case "textarea": ctrl = `<textarea id="${id}">${esc(val??"")}</textarea>`; break;
+    case "tags": ctrl = `<input id="${id}" type="text" value="${esc(Array.isArray(val)?val.join(", "):(val??""))}" placeholder="comma, separated">`; break;
+    case "sel": ctrl = `<select id="${id}">${optionsFor(f,val)}</select>`; break;
+    case "proj": case "ref": ctrl = `<select id="${id}">${optionsFor(f,val)}</select>`; break;
+    case "multi": ctrl = `<select id="${id}" multiple size="4">${optionsFor(f,val)}</select>`; break;
+  }
+  return `<div class="field ${span}"><label for="${id}">${esc(f.l)}${f.req?" *":""}</label>${ctrl}</div>`;
+}
+function openForm(coll, id, preset){
+  const sch = SCHEMAS[coll];
+  const item = id ? byId(coll, id) : null;
+  const vals = {};
+  sch.fields.forEach(f=>{ vals[f.k] = item ? item[f.k] : (preset && preset[f.k] !== undefined ? preset[f.k] : f.def); });
+  openModal(`
+    <div class="modal-head"><h3>${item?"Edit":"New"} ${esc(sch.singular)}</h3><button class="icon-btn" data-action="close-modal" aria-label="Close">${icon("x")}</button></div>
+    <form id="entity-form" data-coll="${coll}" data-id="${id||""}">
+      <div class="modal-body"><div class="form-grid">
+        ${sch.fields.map(f=>fieldHTML(f, vals[f.k])).join("")}
+      </div></div>
+      <div class="modal-foot">
+        <button type="button" class="btn" data-action="close-modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">${item?"Save changes":"Create "+esc(sch.singular)}</button>
+      </div>
+    </form>`, {wide: coll==="tasks"||coll==="bugs"||coll==="content"});
+}
+document.addEventListener("submit", e=>{
+  const form = e.target.closest("#entity-form");
+  if(!form) return;
+  e.preventDefault();
+  const coll = form.dataset.coll, id = form.dataset.id || null;
+  const sch = SCHEMAS[coll], data = {};
+  for(const f of sch.fields){
+    const el = document.getElementById("f_"+f.k);
+    if(!el) continue;
+    if(f.t === "num") data[f.k] = el.value === "" ? "" : Number(el.value);
+    else if(f.t === "tags") data[f.k] = el.value.split(",").map(s=>s.trim()).filter(Boolean);
+    else if(f.t === "multi") data[f.k] = Array.from(el.selectedOptions).map(o=>o.value);
+    else data[f.k] = el.value.trim();
+    if(f.req && !data[f.k]){ toast(f.l + " is required.", "err"); el.focus(); return; }
+  }
+  const saved = saveItem(coll, data, id);
+  if(saved){ closeModal(); rerender(); }
+});
+
+/* ================================================================
+   9. DETAIL VIEW + RELATIONSHIPS
+================================================================ */
+function displayVal(coll, f, item){
+  const v = item[f.k];
+  if(f.t === "pbar") return pbar(v);
+  if(f.t === "proj") return esc(projLabel(v) || "—");
+  if(f.t === "ref"){ const o = byId(f.from, v); return o ? esc(o.title||o.name||"—") : "—"; }
+  if(f.t === "multi") return (Array.isArray(v)&&v.length) ? v.map(pid=>esc(projLabel(pid)||"?")).join(", ") : "—";
+  if(f.t === "tags") return (Array.isArray(v)&&v.length) ? v.map(t=>`<span class="badge">${esc(t)}</span>`).join(" ") : "—";
+  if(f.t === "date") return fmtDate(v);
+  if(f.k === "checklist") return checklistHTML(v);
+  if(typeof v === "number") return esc(v);
+  return v ? esc(v) : "—";
+}
+function checklistHTML(raw){
+  if(!raw) return "—";
+  const lines = String(raw).split("\n").map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return "—";
+  return lines.map((l,i)=>{
+    const done = /^\[x\]/i.test(l);
+    const text = l.replace(/^\[.\]\s*/,"");
+    return `<label class="check-line ${done?"done":""}"><input type="checkbox" data-check="${esc(coll0key())}" data-ckline="${i}" ${done?"checked":""} disabled> ${esc(text)}</label>`;
+  }).join("");
+}
+function coll0key(){ return ""; } // checklist toggling is view-only in forms; live toggle handled in detail
+function relatedFor(coll, item){
+  const rels = [];
+  if(coll === "projects"){
+    const map = [["tasks","Tasks","task"],["features","Features","feature"],["ideas","Ideas","bulb"],["content","Content","doc"],["bugs","Bugs","bug"],["notes","Notes","note"],["research","Research","research"],["goals","Goals","goal"],["decisions","Decisions","decision"]];
+    map.forEach(([c,label,ic])=>{
+      const kids = state[c].filter(x=>x.projectId===item.id);
+      if(kids.length) rels.push({label, ic, items:kids.map(k=>({coll:c, obj:k}))});
+    });
+  } else {
+    if(item.projectId){ const p = byId("projects", item.projectId); if(p) rels.push({label:"Project", ic:"folder", items:[{coll:"projects", obj:p}]}); }
+    ["ideaId:ideas:Idea","featureId:features:Feature","bugId:bugs:Bug","taskId:tasks:Task"].forEach(spec=>{
+      const [fk, c, label] = spec.split(":");
+      if(item[fk]){ const o = byId(c, item[fk]); if(o) rels.push({label, ic:SCHEMAS[c]?SCHEMAS[c].icon:"doc", items:[{coll:c, obj:o}]}); }
+    });
+    const taskKids = state.tasks.filter(t=> t[ coll+"Id" ] === item.id && coll!=="tasks");
+    if(taskKids.length) rels.push({label:"Linked Tasks", ic:"task", items:taskKids.map(k=>({coll:"tasks", obj:k}))});
+  }
+  return rels;
+}
+function openDetail(coll, id){
+  const item = byId(coll, id);
+  if(!item){ toast("Record not found — it may have been deleted.","err"); return; }
+  const sch = SCHEMAS[coll];
+  const extra = [];
+  if(coll === "ideas") extra.push({l:"Suggested priority", v:scoreBadge(item)});
+  if(coll === "ideas" && item.status === "Inbox") extra.push({l:"Next step", v:`<span class="badge tone-orange">Move to Evaluating when you're serious</span>`});
+  const rels = relatedFor(coll, item);
+  openModal(`
+    <div class="modal-head"><h3 style="display:flex;align-items:center;gap:9px">${icon(sch.icon)}${esc(item.title||item.name)}</h3>
+      <button class="icon-btn" data-action="close-modal" aria-label="Close">${icon("x")}</button></div>
+    <div class="modal-body">
+      <dl class="dl">
+        ${sch.fields.filter(f=>f.t!=="textarea"||["checklist"].includes(f.t)).map(f=>`<dt>${esc(f.l)}</dt><dd>${displayVal(coll,f,item)}</dd>`).join("")}
+        ${extra.map(x=>`<dt>${x.l}</dt><dd>${x.v}</dd>`).join("")}
+        <dt>Created</dt><dd>${fmtDate(item.createdAt)} <span class="micro" style="display:inline">· updated ${timeAgo(item.updatedAt)}</span></dd>
+      </dl>
+      ${sch.fields.filter(f=>f.t==="textarea"&&!["checklist"].includes(f.t)&&item[f.k]).map(f=>`
+        <div class="rel-group"><span class="micro">${esc(f.l)}</span>
+          <div style="font-size:13px;white-space:pre-wrap;color:var(--muted);border-left:2px solid var(--border);padding-left:12px;margin-top:4px">${esc(item[f.k])}</div></div>`).join("")}
+      ${rels.length ? `<div class="rel-group" style="margin-top:16px"><span class="micro">Related records</span>
+        ${rels.map(g=>`<div style="margin:10px 0 2px"><span class="micro" style="display:inline">${esc(g.label)}</span></div>
+          ${g.items.map(r=>`<div class="rel-item" data-action="view" data-ref="${r.coll}:${r.obj.id}">${icon(g.ic)}<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.obj.title||r.obj.name)}</span>${badge(r.obj.status||r.obj.severity||"")}</div>`).join("")}`).join("")}
+      </div>` : ""}
+      ${coll === "research" ? `<div class="rel-group" style="margin-top:14px"><span class="micro">Convert this research</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          <button class="btn btn-sm" data-action="convert" data-ref="ideas">${icon("bulb")}To Idea</button>
+          <button class="btn btn-sm" data-action="convert" data-ref="tasks">${icon("task")}To Task</button>
+          <button class="btn btn-sm" data-action="convert" data-ref="decisions">${icon("decision")}To Decision</button>
+          <button class="btn btn-sm" data-action="convert" data-ref="notes">${icon("note")}To Note</button>
+        </div></div>` : ""}
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" data-action="del" data-ref="${coll}:${item.id}">${icon("trash")}Delete</button>
+      <span style="flex:1"></span>
+      <button class="btn" data-action="edit" data-ref="${coll}:${item.id}">${icon("edit")}Edit</button>
+      ${coll==="tasks" ? `<button class="btn btn-primary" data-action="toggle-done" data-ref="${item.id}">${item.status==="Done"?"Reopen":"Mark Done"}</button>` : ""}
+    </div>`, {wide:true});
+}
+
+/* ================================================================
+   10. GENERIC COLLECTION VIEW
+================================================================ */
+function getFilters(coll){
+  if(!ui.filters[coll]) ui.filters[coll] = {q:"", status:"", prio:"", proj:"", kind:""};
+  return ui.filters[coll];
+}
+function applyFilters(coll, items){
+  const f = getFilters(coll);
+  return items.filter(it=>{
+    if(f.q){ const hay = JSON.stringify(Object.values(it)).toLowerCase(); if(!hay.includes(f.q.toLowerCase())) return false; }
+    if(f.status && (it.status||it.severity) !== f.status) return false;
+    if(f.prio && (it.priority||it.severity) !== f.prio) return false;
+    if(f.proj && it.projectId !== f.proj) return false;
+    if(f.kind && it.kind !== f.kind) return false;
+    return true;
+  });
+}
+function sortItems(coll, items){
+  const sch = SCHEMAS[coll];
+  return [...items].sort((a,b)=>{
+    if(sch.prioField){
+      const pa = PRIO_W[a[sch.prioField]] ?? 9, pb = PRIO_W[b[sch.prioField]] ?? 9;
+      if(pa !== pb) return pa - pb;
+    }
+    return (b.updatedAt||0) - (a.updatedAt||0);
+  });
+}
+function cellHTML(coll, col, it){
+  const sch = SCHEMAS[coll];
+  if(col.t === "proj"){ const p = projLabel(it.projectId); return p ? `<span class="badge tone-info">${esc(p)}</span>` : `<span style="color:var(--faint)">—</span>`; }
+  if(col.t === "pbar") return `<div style="display:flex;align-items:center;gap:8px;min-width:110px">${pbar(it[col.k])}<span class="mono" style="font-size:11px">${Number(it[col.k])||0}%</span></div>`;
+  if(col.t === "date") return `<span class="mono" style="font-size:12px">${fmtDate(it[col.k])}</span>`;
+  if(col.t === "due"){
+    if(!it.dueDate) return `<span style="color:var(--faint)">—</span>`;
+    const over = it.dueDate && new Date(it.dueDate) < new Date(new Date().toDateString()) && !["Done","Cancelled"].includes(it.status);
+    return `<span class="mono ${over?"due-over":""}" style="font-size:12px">${fmtDate(it.dueDate)}${over?" !":""}</span>`;
+  }
+  if(col.t === "tags") return (it.tags||[]).slice(0,3).map(t=>`<span class="badge">${esc(t)}</span>`).join(" ") || "—";
+  if(col.t === "kind"){ const o = OPT.seoKind.find(k=>k[0]===it.kind); return badge(o?o[1]:it.kind); }
+  if(col.t === "trim") return `<span style="color:var(--muted);display:inline-block;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(it[col.k]||"—"))}</span>`;
+  if(col.t === "score") return scoreBadge(it);
+  if(col.title) return `<b>${esc(it[col.k])}</b>${it.description?`<span class="sub">${esc(String(it.description).slice(0,70))}</span>`:""}`;
+  const v = it[col.k];
+  if(["status","priority","severity","category","type","horizon"].includes(col.k)) return badge(v);
+  return esc(v ?? "—");
+}
+function collectionBody(coll){
+  const sch = SCHEMAS[coll];
+  const f = getFilters(coll);
+  const items = sortItems(coll, applyFilters(coll, state[coll]));
+  if(!state[coll].length)
+    return emptyState(sch.icon, `No ${sch.label.toLowerCase()} yet`, sch.intro || `Create your first ${sch.singular.toLowerCase()}.`, `+ Add ${sch.singular}`, coll);
+  if(!items.length)
+    return emptyState(sch.icon, "Nothing matches your filters", "Try clearing the search or filters.", null);
+  return `<div class="table-wrap"><table>
+    <thead><tr>${sch.cols.map(c=>`<th>${esc(c.l)}</th>`).join("")}</tr></thead>
+    <tbody>${items.map(it=>`<tr data-action="view" data-ref="${coll}:${it.id}" tabindex="0" role="button" aria-label="Open ${esc(it.title||it.name)}">
+      ${sch.cols.map(c=>`<td class="${c.title?"t-title":""}" data-label="${esc(c.l)}">${cellHTML(coll,c,it)}</td>`).join("")}
+    </tr>`).join("")}</tbody></table></div>
+    <p class="micro" style="margin-top:10px">${items.length} of ${state[coll].length} shown</p>`;
+}
+function filterBar(coll, opts){
+  const sch = SCHEMAS[coll], f = getFilters(coll);
+  const hasStatus = sch.fields.some(x=>x.k==="status") || coll==="bugs";
+  const prioKey = sch.prioField;
+  return `<div class="toolbar">
+    <div class="search-inline">${icon("search")}<input type="search" placeholder="Filter ${sch.label.toLowerCase()}…" data-filter="q" data-coll="${coll}" value="${esc(f.q)}" aria-label="Filter"></div>
+    ${hasStatus?`<select data-filter="status" data-coll="${coll}" aria-label="Filter status">
+      <option value="">All statuses</option>
+      ${(coll==="bugs"?OPT.bugStatus:(sch.fields.find(x=>x.k==="status").opts)).map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}
+    </select>`:""}
+    ${prioKey?`<select data-filter="prio" data-coll="${coll}" aria-label="Filter priority">
+      <option value="">All priorities</option>${OPT.prio.map(p=>`<option ${f.prio===p?"selected":""}>${p}</option>`).join("")}
+    </select>`:""}
+    ${sch.projField?`<select data-filter="proj" data-coll="${coll}" aria-label="Filter project">
+      <option value="">All projects</option>${state.projects.map(p=>`<option value="${p.id}" ${f.proj===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}
+    </select>`:""}
+    ${opts&&opts.extra?opts.extra:""}
+    <button class="btn btn-primary" data-action="add" data-coll="${coll}" style="margin-left:auto">${icon("plus")}Add ${sch.singular}</button>
+  </div>`;
+}
+function vCollection(){
+  const coll = (location.hash||"#/dashboard").replace("#/","").split("?")[0];
+  const sch = SCHEMAS[coll];
+  if(!sch){ location.hash = "#/dashboard"; return; }
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>${esc(sch.label)}</h1>${sch.intro?`<p>${esc(sch.intro)}</p>`:""}</div></div>
+    ${filterBar(coll)}
+    <div id="coll-body">${collectionBody(coll)}</div>`;
+}
+document.addEventListener("input", e=>{
+  const fs = e.target.closest("[data-filter]");
+  if(fs){
+    const coll = fs.dataset.coll;
+    getFilters(coll)[fs.dataset.filter] = fs.value;
+    const body = $("#coll-body"); if(body) body.innerHTML = collectionBody(coll);
+  }
+  if(e.target.id === "gsearch-input"){ handleGlobalSearch(e.target.value); }
+  if(e.target.id === "page-search"){ ui.searchQ = e.target.value; renderSearchResults(); }
+});
+
+/* ================================================================
+   11. DASHBOARD
+================================================================ */
+function currentFocus(){
+  const open = state.tasks.filter(t=>["In Progress","Todo","Review"].includes(t.status));
+  if(!open.length) return null;
+  open.sort((a,b)=>{
+    const sa = a.status==="In Progress"?0:a.status==="Review"?1:2, sb = b.status==="In Progress"?0:b.status==="Review"?1:2;
+    if(sa!==sb) return sa-sb;
+    const pa = PRIO_W[a.priority]??9, pb = PRIO_W[b.priority]??9;
+    if(pa!==pb) return pa-pb;
+    return (a.dueDate?new Date(a.dueDate):Infinity) - (b.dueDate?new Date(b.dueDate):Infinity);
+  });
+  return open[0];
+}
+function vDashboard(){
+  const focus = currentFocus();
+  const stats = [
+    ["Active Projects", state.projects.filter(p=>["Planning","Active"].includes(p.status)).length, "folder"],
+    ["Open Tasks", state.tasks.filter(t=>!["Done","Cancelled"].includes(t.status)).length, "task"],
+    ["Ideas in Inbox", state.ideas.filter(i=>["Inbox","Evaluating"].includes(i.status)).length, "bulb"],
+    ["Content Items", state.content.length, "doc"],
+    ["Features", state.features.length, "feature"],
+    ["Open Bugs", state.bugs.filter(b=>!["Resolved","Closed"].includes(b.status)).length, "bug"],
+    ["SEO Issues", state.seo.filter(s=>s.kind==="tech"&&!["Done","Won't Fix"].includes(s.status)).length, "seo"],
+    ["Active Goals", state.goals.filter(g=>g.status==="Active").length, "goal"],
+  ];
+  const openTasks = state.tasks.filter(t=>!["Done","Cancelled"].includes(t.status))
+    .sort((a,b)=>(PRIO_W[a.priority]??9)-(PRIO_W[b.priority]??9));
+  const groups = {};
+  PRIOS.forEach(p=>groups[p] = openTasks.filter(t=>(t.priority||"Medium")===p).slice(0,4));
+  const activeProjects = state.projects.filter(p=>["Active","Planning"].includes(p.status));
+  const focusPct = focus ? (()=>{ const lines = String(focus.checklist||"").split("\n").filter(Boolean); return lines.length? Math.round(lines.filter(l=>/^\[x\]/i.test(l)).length/lines.length*100) : 0; })() : 0;
+
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Dashboard</h1><p>Everything YallaBuy, in one place. Here's where your attention belongs right now.</p></div>
+      <div class="head-actions"><button class="btn" data-nav="review">${icon("review")}Weekly Review</button></div></div>
+
+    <span class="micro">Work on this now</span>
+    ${focus ? `
+    <div class="focus-panel" style="margin-top:8px">
+      <div class="focus-side"><span class="pct">${focusPct}%</span><span class="micro" style="color:var(--bg);opacity:.6">checklist</span></div>
+      <span class="micro">${esc(focus.status)} · ${esc(focus.priority||"Medium")} priority</span>
+      <h2>${esc(focus.title)}</h2>
+      <div style="color:var(--muted);font-size:13px;max-width:70%">${esc(projLabel(focus.projectId)||"No project")} ${focus.dueDate?` · due ${fmtDate(focus.dueDate)}`:" · no due date"}</div>
+      <div class="focus-meta">
+        ${badge(focus.priority,"tone-orange").replace('class="badge','style="background:rgba(240,112,58,.18);color:#f0703a;border-color:transparent" class="badge')}
+        ${focus.estimate?`<span class="fm">~${esc(focus.estimate)}h est.</span>`:""}
+        ${focus.checklist?`<span class="fm">${String(focus.checklist).split("\n").filter(Boolean).length} checklist items</span>`:""}
+        <button class="btn btn-sm" style="background:var(--orange);border-color:var(--orange);color:#fff" data-action="view" data-ref="tasks:${focus.id}">Open task ${icon("arrow")}</button>
+      </div>
+      ${focus.checklist?pbar(focusPct):""}
+    </div>` : `
+    <div class="card" style="margin-top:8px"><div class="card-body">${emptyState("task","Nothing urgent — pick your next move","No open prioritized tasks. Capture what matters next.","+ Add Task","tasks")}</div></div>`}
+
+    <div class="stat-grid" style="margin-top:14px">
+      ${stats.map(([l,v,ic])=>`<div class="stat"><span class="micro" style="display:flex;align-items:center;gap:6px">${icon(ic,"")} ${l}</span><b class="mono" style="font-family:var(--disp)">${v}</b></div>`).join("")}
+    </div>
+
+    <div class="dash-grid">
+      <div>
+        <span class="micro" style="display:block;margin-bottom:8px">Today's work — by priority</span>
+        <div class="prio-cols">
+          ${PRIOS.map(p=>`<div class="prio-col"><span class="micro">${p}</span>
+            ${groups[p].length ? groups[p].map(t=>`<div class="prio-item" data-action="view" data-ref="tasks:${t.id}">
+                <b>${esc(t.title)}</b><span>${esc(projLabel(t.projectId)||"No project")}${t.dueDate?" · "+fmtDate(t.dueDate):""}</span>
+              </div>`).join("") : `<div class="prio-item" style="cursor:default;color:var(--faint)">Nothing ${p.toLowerCase()} priority</div>`}
+          </div>`).join("")}
+        </div>
+        <span class="micro" style="display:block;margin:16px 0 8px">Project progress</span>
+        <div class="card">
+          ${activeProjects.length ? activeProjects.map(p=>{
+            const tk = state.tasks.filter(t=>t.projectId===p.id);
+            const doneTk = tk.filter(t=>t.status==="Done").length;
+            const taskPct = tk.length ? Math.round(doneTk/tk.length*100) : 0;
+            return `<div class="proj-row" data-action="view" data-ref="projects:${p.id}">
+              <div class="pr-name">${esc(p.name)}<small>${tk.length} task${tk.length===1?"":"s"} · ${doneTk} done · task progress ${taskPct}%</small></div>
+              ${pbar(p.progress)}<span class="mono" style="font-size:11px;width:34px;text-align:right">${Number(p.progress)||0}%</span>
+              ${badge(p.status)}
+            </div>`;}).join("") : `<div class="card-body" style="color:var(--muted)">No active projects.</div>`}
+        </div>
+      </div>
+      <div>
+        <span class="micro" style="display:block;margin-bottom:8px">Recent activity</span>
+        <div class="card" style="max-height:520px;overflow-y:auto">
+          ${state.activity.length ? state.activity.slice(0,14).map(a=>`
+            <div class="act-item"><span class="act-dot"></span>
+              <div><b style="font-weight:600">${esc(a.action)}</b> <span style="color:var(--muted)">${esc(a.type)} “${esc(String(a.title).slice(0,44))}”</span></div>
+              <time>${timeAgo(a.ts)}</time></div>`).join("") : `<div class="card-body" style="color:var(--muted)">No activity yet — start creating.</div>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ================================================================
+   12. TASKS — list + kanban + drag & drop
+================================================================ */
+function vTasks(){
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Tasks</h1><p>The execution layer. Drag cards between columns in Kanban view to update status.</p></div>
+      <div class="head-actions">
+        <button class="btn ${ui.taskView==="list"?"btn-primary":""}" data-action="task-view" data-ref="list">List</button>
+        <button class="btn ${ui.taskView==="kanban"?"btn-primary":""}" data-action="task-view" data-ref="kanban">Kanban</button>
+      </div></div>
+    ${filterBar("tasks")}
+    <div id="coll-body">${tasksBody()}</div>`;
+}
+function tasksBody(){
+  const items = sortItems("tasks", applyFilters("tasks", state.tasks));
+  if(!state.tasks.length) return emptyState("task","No tasks yet","Break your projects into concrete, finishable tasks.","+ Add Task","tasks");
+  if(ui.taskView === "kanban"){
+    const cols = ["Backlog","Todo","In Progress","Review","Done"];
+    return `<div class="kanban">${cols.map(st=>{
+      const cards = items.filter(t=>t.status===st);
+      return `<div class="kb-col" data-kb="${st}" aria-label="${st} column">
+        <div class="kb-head"><span class="micro">${st}</span><span class="micro">${cards.length}</span></div>
+        ${cards.map(t=>`<div class="kb-card" draggable="true" data-kbc="${t.id}" data-action="view" data-ref="tasks:${t.id}">
+          <b>${esc(t.title)}</b>
+          <div class="kb-meta">${badge(t.priority)}${t.dueDate?`<span class="mono" style="font-size:10.5px;color:var(--faint)">${fmtDate(t.dueDate)}</span>`:""}
+            ${projLabel(t.projectId)?`<span class="badge tone-info">${esc(projLabel(t.projectId))}</span>`:""}</div>
+        </div>`).join("")}
+      </div>`;}).join("")}</div>`;
+  }
+  if(!items.length) return emptyState("task","Nothing matches your filters","Try clearing the search or filters.",null);
+  const sch = SCHEMAS.tasks;
+  return `<div class="table-wrap"><table>
+    <thead><tr>${sch.cols.map(c=>`<th>${esc(c.l)}</th>`).join("")}</tr></thead>
+    <tbody>${items.map(it=>`<tr data-action="view" data-ref="tasks:${it.id}" tabindex="0" role="button">
+      ${sch.cols.map(c=>`<td class="${c.title?"t-title":""}" data-label="${esc(c.l)}">${cellHTML("tasks",c,it)}</td>`).join("")}
+    </tr>`).join("")}</tbody></table></div>
+    <p class="micro" style="margin-top:10px">${items.length} of ${state.tasks.length} shown</p>`;
+}
+document.addEventListener("dragstart", e=>{
+  const card = e.target.closest("[data-kbc]");
+  if(card) e.dataTransfer.setData("text/plain", card.dataset.kbc);
+});
+document.addEventListener("dragover", e=>{
+  const col = e.target.closest(".kb-col");
+  if(col){ e.preventDefault(); col.classList.add("drag-over"); }
+});
+document.addEventListener("dragleave", e=>{
+  const col = e.target.closest(".kb-col");
+  if(col && !col.contains(e.relatedTarget)) col.classList.remove("drag-over");
+});
+document.addEventListener("drop", e=>{
+  const col = e.target.closest(".kb-col");
+  if(!col) return;
+  e.preventDefault();
+  col.classList.remove("drag-over");
+  const id = e.dataTransfer.getData("text/plain");
+  const t = byId("tasks", id);
+  if(!t || t.status === col.dataset.kb) return;
+  const old = t.status;
+  t.status = col.dataset.kb;
+  if(t.status==="Done") t.completedDate = Date.now(); else delete t.completedDate;
+  logAct("Status changed","tasks",`${t.title}: ${old} → ${t.status}`);
+  saveState(); toast(`“${t.title.slice(0,30)}” → ${t.status}`);
+  const body = $("#coll-body"); if(body) body.innerHTML = tasksBody();
+});
+
+/* ================================================================
+   13. SEO CENTER (tabbed)
+================================================================ */
+function vSeo(){
+  const tabs = [["all","All"],["task","SEO Tasks"],["opportunity","Opportunities"],["page","Pages To Improve"],["tech","Technical Issues"],["keyword","Keyword Ideas"]];
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>SEO Center</h1><p>${esc(SCHEMAS.seo.intro)}</p></div></div>
+    <div class="tabs">${tabs.map(([k,l])=>`<button class="${ui.seoTab===k?"active":""}" data-action="seo-tab" data-ref="${k}">${l}</button>`).join("")}</div>
+    ${filterBar("seo")}
+    <div id="coll-body">${seoBody()}</div>`;
+}
+function seoBody(){
+  if(ui.seoTab !== "all") getFilters("seo").kind = ui.seoTab;
+  else getFilters("seo").kind = "";
+  return collectionBody("seo");
+}
+
+/* ================================================================
+   14. GOALS (horizon tabs)
+================================================================ */
+function vGoals(){
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Goals</h1><p>Where YallaBuy is heading — short, medium, and long term.</p></div>
+      <div class="head-actions"><button class="btn btn-primary" data-action="add" data-coll="goals">${icon("plus")}Add Goal</button></div></div>
+    <div class="horizon-tabs">${OPT.horizon.map(h=>`<button class="btn ${ui.goalTab===h?"btn-primary":""}" data-action="goal-tab" data-ref="${h}">${h}</button>`).join("")}</div>
+    <div class="card">
+      ${state.goals.filter(g=>g.horizon===ui.goalTab).length ? state.goals.filter(g=>g.horizon===ui.goalTab).map(g=>{
+        const tasks = state.tasks.filter(t=>g.taskIds?t.taskIds.includes(t.id):t.projectId && (g.projectIds||[]).includes(t.projectId));
+        return `<div class="goal-card" data-action="view" data-ref="goals:${g.id}" style="cursor:pointer">
+          <div class="goal-top"><b>${esc(g.title)}</b><span style="display:flex;gap:6px">${badge(g.priority)}${badge(g.status)}</span></div>
+          ${g.description?`<div style="color:var(--muted);font-size:12.5px;margin-bottom:8px">${esc(g.description)}</div>`:""}
+          ${pbar(g.progress)}
+          <div class="goal-meta">
+            <span class="mono">${Number(g.progress)||0}%</span>
+            ${g.targetDate?`<span>${icon("clock")} target ${fmtDate(g.targetDate)}</span>`:""}
+            ${(g.projectIds||[]).length?`<span>${(g.projectIds||[]).map(pid=>esc(projLabel(pid)||"")).filter(Boolean).join(" · ")}</span>`:""}
+            <span>${tasks.length} related task${tasks.length===1?"":"s"}</span>
+          </div></div>`;}).join("")
+      : emptyState("goal",`No ${ui.goalTab.toLowerCase()} goals yet`,"Set a goal with a target date to give your work direction.", `+ Add Goal`, "goals")}
+    </div>`;
+}
+
+/* ================================================================
+   15. WEEKLY REVIEW
+================================================================ */
+const REVIEW_QS = [
+  ["finished","What did I finish?"],["notFinished","What did I not finish?"],["problems","What problems appeared?"],
+  ["learned","What did I learn?"],["stop","What should I stop doing?"],["improve","What should I improve?"],
+  ["next3","Top 3 priorities for next week"],
+];
+function vReview(){
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Weekly Review</h1><p>Ten honest minutes here save ten wasted hours next week.</p></div></div>
+    <div class="card" style="margin-bottom:18px"><div class="card-body">
+      <form id="review-form">
+        <div class="field" style="max-width:240px"><label for="rv_week">Week of</label><input type="date" id="rv_week" required></div>
+        ${REVIEW_QS.map(([k,l])=>`<div class="review-block"><label for="rv_${k}">${l}</label><textarea id="rv_${k}"></textarea></div>`).join("")}
+        <button class="btn btn-primary" type="submit">${icon("review")}Save Review</button>
+      </form>
+    </div></div>
+    <span class="micro" style="display:block;margin-bottom:8px">Past reviews</span>
+    ${state.reviews.length ? [...state.reviews].sort((a,b)=>b.week-a.week).map(r=>`
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-head"><h3>Week of ${fmtDate(r.week)}</h3>
+          <button class="icon-btn" data-action="del-review" data-ref="${r.id}" aria-label="Delete review">${icon("trash")}</button></div>
+        <div class="card-body">
+          ${REVIEW_QS.filter(([k])=>r[k]).map(([k,l])=>`<div style="margin-bottom:10px"><span class="micro">${l}</span>
+            <div style="font-size:13px;white-space:pre-wrap;color:var(--muted);margin-top:2px">${esc(r[k])}</div></div>`).join("")}
+        </div></div>`).join("")
+    : `<div class="card">${emptyState("review","No reviews yet","Your first review takes 10 minutes and pays for itself within a week.",null)}</div>`}`;
+  const d = new Date(); d.setDate(d.getDate()-7);
+  document.getElementById("rv_week").value = d.toISOString().slice(0,10);
+}
+document.addEventListener("submit", e=>{
+  if(e.target.id !== "review-form") return;
+  e.preventDefault();
+  const r = {id:uid("rv"), week: new Date(document.getElementById("rv_week").value).getTime() || Date.now()};
+  REVIEW_QS.forEach(([k])=>{ r[k] = (document.getElementById("rv_"+k).value||"").trim(); });
+  state.reviews.unshift(r);
+  logAct("Created","reviews",`Weekly review (${fmtDate(r.week)})`);
+  saveState(); toast("Weekly review saved."); vReview();
+});
+
+/* ================================================================
+   16. GLOBAL SEARCH
+================================================================ */
+function searchAll(q){
+  q = q.trim().toLowerCase();
+  if(!q) return [];
+  const out = [];
+  COLLECTIONS.forEach(coll=>{
+    (state[coll]||[]).forEach(it=>{
+      const hay = [it.title||it.name, it.description, it.keyword, it.content, it.decision, it.findings, (it.tags||[]).join(" ")].filter(Boolean).join(" ").toLowerCase();
+      if(hay.includes(q)) out.push({coll, it});
+    });
+  });
+  return out.slice(0, 40);
+}
+function handleGlobalSearch(q){
+  const panel = $("#gsearch-panel");
+  ui.gsOpen = true;
+  if(!q.trim()){ panel.hidden = true; return; }
+  const res = searchAll(q).slice(0,8);
+  panel.innerHTML = res.length ? res.map(r=>`
+    <div class="gs-item" data-action="view" data-ref="${r.coll}:${r.it.id}">
+      <span class="gst">${r.coll}</span>
+      <b>${esc(r.it.title||r.it.name)}</b>
+      ${badge(r.it.status||r.it.severity||"")}
+      ${projLabel(r.it.projectId)?`<span class="micro">${esc(projLabel(r.it.projectId))}</span>`:""}
+    </div>`).join("") + `<div class="gs-item" data-action="goto-search" style="justify-content:center;color:var(--orange-ink);font-weight:600">See all results for “${esc(q)}”</div>`
+  : `<div class="gs-item" style="color:var(--muted)">No results for “${esc(q)}”</div>`;
+  panel.hidden = false;
+}
+function vSearch(){
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Search</h1><p>Across projects, tasks, ideas, content, features, SEO, bugs, notes, research, goals and decisions.</p></div></div>
+    <div class="toolbar">
+      <div class="search-inline">${icon("search")}<input type="search" id="page-search" placeholder="Type to search…" value="${esc(ui.searchQ)}" autofocus></div>
+      <select id="sf-type" aria-label="Type filter"><option value="">All types</option>${COLLECTIONS.map(c=>`<option>${c}</option>`).join("")}</select>
+      <select id="sf-status" aria-label="Status filter"><option value="">All statuses</option></select>
+      <select id="sf-proj" aria-label="Project filter"><option value="">All projects</option>${state.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select>
+    </div>
+    <div id="search-results"></div>`;
+  $("#sf-type").onchange = $("#sf-status").onchange = $("#sf-proj").onchange = renderSearchResults;
+  renderSearchResults();
+  const pi = $("#page-search"); if(pi) pi.focus();
+}
+function renderSearchResults(){
+  const box = $("#search-results"); if(!box) return;
+  const tf = $("#sf-type"), sf = $("#sf-status"), pf = $("#sf-proj");
+  let res = searchAll(ui.searchQ);
+  // rebuild status options from current result set
+  const statuses = [...new Set(res.map(r=>r.it.status||r.it.severity).filter(Boolean))].sort();
+  const curS = sf.value;
+  sf.innerHTML = `<option value="">All statuses</option>` + statuses.map(s=>`<option ${curS===s?"selected":""}>${esc(s)}</option>`).join("");
+  res = res.filter(r=>{
+    if(tf.value && r.coll !== tf.value) return false;
+    if(curS && (r.it.status||r.it.severity) !== curS) return false;
+    if(pf.value && r.it.projectId !== pf.value) return false;
+    return true;
+  });
+  box.innerHTML = res.length ? `<div class="table-wrap"><table>
+    <thead><tr><th>Type</th><th>Title</th><th>Status</th><th>Project</th></tr></thead>
+    <tbody>${res.map(r=>`<tr data-action="view" data-ref="${r.coll}:${r.it.id}" tabindex="0" role="button">
+      <td data-label="Type">${badge(r.coll,"tone-ink")}</td>
+      <td class="t-title" data-label="Title"><b>${esc(r.it.title||r.it.name)}</b></td>
+      <td data-label="Status">${badge(r.it.status||r.it.severity||"")}</td>
+      <td data-label="Project">${projLabel(r.it.projectId)?esc(projLabel(r.it.projectId)):`<span style="color:var(--faint)">—</span>`}</td>
+    </tr>`).join("")}</tbody></table></div>
+    <p class="micro" style="margin-top:10px">${res.length} result${res.length===1?"":"s"}</p>`
+  : emptyState("seo", ui.searchQ?"No results":"Start typing", ui.searchQ?`Nothing found for “${ui.searchQ}”.`:"Search across everything in your workspace.",null);
+}
+
+/* ================================================================
+   17. SETTINGS — theme, import / export / reset
+================================================================ */
+function vSettings(){
+  const counts = COLLECTIONS.map(c=>`${c}: <b class="mono">${state[c].length}</b>`).join(" · ");
+  $("#view").innerHTML = `
+    <div class="page-head"><div><h1>Settings</h1></div></div>
+    <div class="card" style="max-width:640px;margin-bottom:14px">
+      <div class="card-head"><h3>Appearance</h3></div>
+      <div class="card-body" style="display:flex;gap:8px">
+        <button class="btn ${state.settings.theme!=="dark"?"btn-primary":""}" data-action="set-theme" data-ref="light">${icon("sun")}Light</button>
+        <button class="btn ${state.settings.theme==="dark"?"btn-primary":""}" data-action="set-theme" data-ref="dark">${icon("moon")}Dark</button>
+      </div></div>
+    <div class="card" style="max-width:640px;margin-bottom:14px">
+      <div class="card-head"><h3>Data Management</h3></div>
+      <div class="card-body">
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Everything lives in your browser's localStorage. Export regularly to keep a backup.</p>
+        <p class="micro" style="margin-bottom:14px">${counts}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" data-action="export">${icon("doc")}Export JSON</button>
+          <button class="btn" data-action="import">${icon("arrow")}Import JSON</button>
+          <button class="btn btn-danger" data-action="reset-demo">${icon("review")}Reset to Demo Data</button>
+        </div>
+      </div></div>
+    <div class="card" style="max-width:640px">
+      <div class="card-head"><h3>About</h3></div>
+      <div class="card-body" style="color:var(--muted);font-size:13px">
+        <b style="color:var(--ink)">YallaBuy Project OS</b> — one file, one system. Workflow: Idea → Evaluate → Plan → Execute → Review → Improve.<br><br>
+        Priority scores are a simple heuristic ((Impact + Importance + Urgency) ÷ Effort), not an AI judgment. SEO and affiliate data are manual by design — nothing here pretends to fetch live external data.
+      </div></div>`;
+}
+function applyTheme(){
+  const dark = state.settings.theme === "dark";
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("#theme-btn").innerHTML = icon(dark?"sun":"moon") + (dark?"Light":"Dark") + " Mode";
+}
+function doExport(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "yallabuy-project-os-" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Export downloaded.");
+}
+function doImport(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data || typeof data !== "object" || !Array.isArray(data.projects)) throw new Error("Not a YallaBuy Project OS export");
+      confirmDlg("Import data?", "This will REPLACE your current workspace with the imported file. Export first if you need a backup.", ()=>{
+        state = data;
+        ["projects","tasks","ideas","content","features","seo","bugs","notes","research","goals","decisions","reviews","activity","tags"].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
+        if(!state.settings) state.settings = {};
+        saveState(); applyTheme(); closeModal(); rerender(); toast("Import successful.");
+      });
+    }catch(err){ toast("Import failed: " + err.message, "err"); }
+  };
+  reader.onerror = () => toast("Could not read that file.","err");
+  reader.readAsText(file);
+}
+
+/* ================================================================
+   18. EVENT DELEGATION (single handlers)
+================================================================ */
+document.addEventListener("click", e=>{
+  const navEl = e.target.closest("[data-nav]");
+  if(navEl){ location.hash = "#/" + navEl.dataset.nav; closeMenus(); return; }
+  const el = e.target.closest("[data-action]");
+  // close menus when clicking elsewhere
+  if(!e.target.closest(".qa-wrap")) $("#qa-menu").hidden = true;
+  if(!e.target.closest(".gsearch")){ $("#gsearch-panel").hidden = true; ui.gsOpen = false; }
+  if(!el) return;
+  const act = el.dataset.action, ref = el.dataset.ref || "";
+  switch(act){
+    case "theme": state.settings.theme = state.settings.theme==="dark"?"light":"dark"; saveState(); applyTheme(); break;
+    case "set-theme": state.settings.theme = ref; saveState(); applyTheme(); vSettings(); break;
+    case "open-side": openSidebar(); break;
+    case "close-side": closeSidebar(); break;
+    case "close-modal": closeModal(); break;
+    case "quickadd": { const m = $("#qa-menu"); m.hidden = !m.hidden;
+      if(!m.hidden && !m.dataset.built){ buildQuickAdd(); m.dataset.built = "1"; } break; }
+    case "add": openForm(el.dataset.coll); break;
+    case "qa-add": $("#qa-menu").hidden = true; openForm(ref); break;
+    case "edit": { const [c,id] = ref.split(":"); openForm(c, id); break; }
+    case "del": { const [c,id] = ref.split(":"); deleteItem(c, id); break; }
+    case "view": { const [c,id] = ref.split(":"); if(byId(c,id)) openDetail(c,id); break; }
+    case "toggle-done": {
+      const t = byId("tasks", ref); if(!t) break;
+      t.status = t.status==="Done" ? "Todo" : "Done";
+      if(t.status==="Done") t.completedDate = Date.now(); else delete t.completedDate;
+      logAct("Completed","tasks",t.title); saveState(); closeModal(); rerender(); toast(t.status==="Done"?"Task completed. 🎉".replace(" 🎉","") : "Task reopened.");
+      break; }
+    case "task-view": ui.taskView = ref; vTasks(); break;
+    case "seo-tab": ui.seoTab = ref; vSeo(); break;
+    case "goal-tab": ui.goalTab = ref; vGoals(); break;
+    case "goto-search": location.hash = "#/search"; $("#gsearch-panel").hidden = true;
+      setTimeout(()=>{ const pi=$("#page-search"); if(pi){ pi.value = $("#gsearch-input").value; ui.searchQ = pi.value; renderSearchResults(); } },30);
+      break;
+    case "del-review": confirmDlg("Delete this review?","Saved weekly reviews are permanent history — this cannot be undone.",()=>{
+        state.reviews = state.reviews.filter(r=>r.id!==ref); saveState(); closeModal(); vReview(); toast("Review deleted."); });
+      break;
+    case "convert": {
+      const d = byId("research", currentDetailId());
+      if(!d) break;
+      const now = Date.now();
+      if(ref==="ideas") saveItem("ideas",{title:d.title, description:d.conclusion||d.findings||"", status:"Inbox", impact:3, importance:3, urgency:3, effort:3, priority:"Medium", projectId:d.projectId||""});
+      if(ref==="tasks") saveItem("tasks",{title:d.title, description:d.conclusion||"", status:"Todo", priority:"Medium", projectId:d.projectId||"", tags:[]});
+      if(ref==="decisions") saveItem("decisions",{title:d.title, decision:d.conclusion||"", reason:d.findings||"", alternatives:"", status:"Proposed", projectId:d.projectId||""});
+      if(ref==="notes") saveItem("notes",{title:d.title, content:[d.findings,d.conclusion].filter(Boolean).join("\n\n"), category:"Research", tags:[], projectId:d.projectId||""});
+      closeModal(); rerender();
+      break; }
+    case "export": doExport(); break;
+    case "import": $("#import-file").click(); break;
+    case "reset-demo": confirmDlg("Reset to demo data?","ALL your current data will be replaced with the original YallaBuy demo set. Export a backup first if unsure.",()=>{
+        state = seedData(); saveState(); applyTheme(); closeModal(); rerender(); toast("Demo data restored."); });
+      break;
+  }
+});
+/* remember which detail is open for "convert" */
+let _detailId = null;
+const _openDetail = openDetail;
+openDetail = function(coll, id){ _detailId = id; _openDetail(coll, id); };
+function currentDetailId(){ return _detailId; }
+/* keyboard activate rows */
+document.addEventListener("keydown", e=>{
+  if(e.key==="Enter" && e.target.matches("tr[data-action='view']")) e.target.click();
+});
+ $("#import-file").addEventListener("change", e=>{
+  if(e.target.files[0]) doImport(e.target.files[0]);
+  e.target.value = "";
+});
+document.addEventListener("click", e=>{
+  if(e.target.closest("#gsearch-input") && $("#gsearch-input").value) handleGlobalSearch($("#gsearch-input").value);
+});
+window.addEventListener("error", ()=>{ /* never let one error kill the UI silently */ });
+
+/* ================================================================
+   19. QUICK ADD MENU
+================================================================ */
+function buildQuickAdd(){
+  $("#qa-menu").innerHTML = [
+    ["tasks","Task","task"],["ideas","Idea","bulb"],["notes","Note","note"],["bugs","Bug","bug"],
+    ["content","Article","doc"],["features","Feature","feature"],["research","Research","research"],
+    ["goals","Goal","goal"],["decisions","Decision","decision"],
+  ].map(([c,l,ic])=>`<button data-action="qa-add" data-ref="${c}">${icon(ic)}+ ${l}</button>`).join("");
+}
+
+/* ================================================================
+   20. DEMO DATA — realistic YallaBuy seed
+================================================================ */
+function seedData(){
+  const now = Date.now(), D = 86400000;
+  const s = { projects:[],tasks:[],ideas:[],content:[],features:[],seo:[],bugs:[],notes:[],research:[],goals:[],decisions:[],reviews:[],activity:[],tags:[],
+    settings:{theme: (localStorage.getItem("yb_theme")==="dark"?"dark":"light")} };
+  const mk = (coll, obj, daysAgo) => Object.assign({id:uid(coll.slice(0,2)), createdAt:now-daysAgo*D, updatedAt:now-daysAgo*D+3600000}, obj);
+
+  const pSeo  = mk("projects",{name:"YallaBuy SEO", status:"Active", priority:"High", progress:45, description:"Grow organic traffic: keywords, internal linking, technical health, content alignment with search intent.", startDate:now-40*D, targetDate:now+80*D},40);
+  const pCat  = mk("projects",{name:"YallaBuy Category System", status:"Active", priority:"Critical", progress:60, description:"Rebuild category pages: structure, filtering, intro copy, schema. Electronics first, then Home & Kitchen.", startDate:now-25*D, targetDate:now+35*D},25);
+  const pCont = mk("projects",{name:"YallaBuy Content System", status:"Active", priority:"High", progress:30, description:"Publishing engine: reviews, buying guides, comparisons. 2 pieces per week minimum.", startDate:now-20*D, targetDate:now+90*D},20);
+  const pPerf = mk("projects",{name:"YallaBuy Performance", status:"Planning", priority:"Medium", progress:10, description:"Core Web Vitals: images, LCP, CLS, third-party scripts.", startDate:now-5*D, targetDate:now+60*D},5);
+  s.projects.push(pSeo,pCat,pCont,pPerf);
+
+  s.tasks.push(
+    mk("tasks",{title:"Build Electronics Category Page", status:"In Progress", priority:"Critical", projectId:pCat.id, category:"Development", tags:["category","electronics"], dueDate:new Date(now+3*D).toISOString().slice(0,10), estimate:6, checklist:"[x] Wireframe\n[x] Filter sidebar\n[ ] Intro copy block\n[ ] Product grid + schema", description:"New template for /category/electronics with intro copy, filters and ProductList schema."},3),
+    mk("tasks",{title:"Improve Internal Linking", status:"Todo", priority:"High", projectId:pSeo.id, category:"SEO", tags:["linking"], dueDate:new Date(now+6*D).toISOString().slice(0,10), estimate:4, checklist:"[ ] Audit orphan pages\n[ ] Add related-guide links\n[ ] Breadcrumb check"},6),
+    mk("tasks",{title:"Fix Mobile Layout on Price Pages", status:"Todo", priority:"High", projectId:pCat.id, category:"Bugfix", tags:["mobile","css"], dueDate:new Date(now-1*D).toISOString().slice(0,10), estimate:2, description:"Price table overflows on screens < 380px."},4),
+    mk("tasks",{title:"Optimize Hero Image (AVIF + lazy)", status:"Review", priority:"Medium", projectId:pPerf.id, category:"Performance", tags:["images","lcp"], estimate:1, checklist:"[x] Export AVIF\n[ ] Awaiting Lighthouse re-run"},2),
+    mk("tasks",{title:"Write Sony WH-1000XM5 Review", status:"In Progress", priority:"High", projectId:pCont.id, category:"Writing", tags:["review","audio"], dueDate:new Date(now+2*D).toISOString().slice(0,10), estimate:5, checklist:"[x] Outline\n[x] Specs table\n[ ] Draft 1800 words\n[ ] SEO pass"},5),
+    mk("tasks",{title:"Keyword research: 'best X under 500 SAR'", status:"Backlog", priority:"Medium", projectId:pSeo.id, category:"SEO", tags:["keywords"]},8),
+    mk("tasks",{title:"Set up review schema on product pages", status:"Backlog", priority:"Medium", projectId:pSeo.id, category:"Development", tags:["schema"]},9),
+    mk("tasks",{title:"Compare affiliate plugins options", status:"Done", priority:"Medium", projectId:pCont.id, category:"Research", completedDate:now-2*D},10),
+    mk("tasks",{title:"Draft buying guide template", status:"Done", priority:"High", projectId:pCont.id, category:"Content", completedDate:now-4*D, checklist:"[x] H2 skeleton\n[x] CTA blocks"},11)
+  );
+
+  s.ideas.push(
+    mk("ideas",{title:"Price Range Pages (e.g. 'best phones under 2000 SAR')", status:"Inbox", category:"SEO", impact:5, importance:4, urgency:3, effort:3, priority:"High", projectId:pSeo.id, description:"Programmatic landing pages per price bracket — high commercial intent, reusable template."},2),
+    mk("ideas",{title:"Product Comparison Tool", status:"Evaluating", category:"Feature", impact:5, importance:4, urgency:2, effort:5, priority:"Medium", description:"Side-by-side spec comparison. Big effort — needs a clean product data model first."},4),
+    mk("ideas",{title:"Smart Product Finder Quiz", status:"Inbox", category:"UX", impact:4, importance:3, urgency:2, effort:4, priority:"Low", description:"3-question quiz that recommends a product. Good engagement play, later."},6),
+    mk("ideas",{title:"Weekly Deals Newsletter", status:"Rejected", category:"Business", impact:3, importance:2, urgency:1, effort:4, priority:"Low", notes:"Rejected: no email list yet. Revisit after 1k visitors/mo."},15)
+  );
+
+  s.content.push(
+    mk("content",{title:"Best Robot Vacuums for Pet Hair", type:"Buying Guide", keyword:"best robot vacuum pet hair", intent:"Commercial", status:"Writing", category:"Home", targetWords:2200, wordCount:900, seoStatus:"Partial", internalLinking:"Partial", affiliate:"Pending", projectId:pCont.id},3),
+    mk("content",{title:"Best USB-C Hubs", type:"Buying Guide", keyword:"best usb-c hub", intent:"Commercial", status:"Ready", category:"Electronics", targetWords:1600, wordCount:1550, seoStatus:"Good", internalLinking:"Complete", affiliate:"Active"},6),
+    mk("content",{title:"Sony WH-1000XM5 Review", type:"Product Review", keyword:"sony wh-1000xm5 review", intent:"Informational", status:"Writing", category:"Electronics", targetWords:1800, wordCount:600, seoStatus:"Missing", internalLinking:"None", affiliate:"None", projectId:pCont.id, relatedProducts:"Sony WH-1000XM5, Bose QC45"},4),
+    mk("content",{title:"Mechanical Keyboard Switch Types Explained", type:"Article", keyword:"mechanical keyboard switches", intent:"Informational", status:"Published", category:"Electronics", targetWords:1400, wordCount:1520, seoStatus:"Good", internalLinking:"Partial", affiliate:"Active", publishedDate:now-9*D, projectId:pCont.id},14),
+    mk("content",{title:"Air Fryer vs Convection Oven", type:"Comparison", keyword:"air fryer vs convection oven", intent:"Commercial", status:"Idea", category:"Home", targetWords:1500, projectId:pCont.id},1)
+  );
+
+  s.features.push(
+    mk("features",{title:"Advanced Search", status:"Building", priority:"High", projectId:pCat.id, impact:4, difficulty:4, progress:55, description:"Filters by price, brand, rating + instant results."},8),
+    mk("features",{title:"Product Filtering", status:"Testing", priority:"High", projectId:pCat.id, impact:5, difficulty:3, progress:80},8),
+    mk("features",{title:"Price Tracking (manual snapshots)", status:"Planning", priority:"Medium", projectId:pPerf.id, impact:4, difficulty:4, progress:5, notes:"Manual price entry — no scraping. Charts drawn from stored snapshots."},7)
+  );
+
+  s.seo.push(
+    mk("seo",{title:"best robot vacuum saudi", kind:"keyword", intent:"Commercial", difficulty:35, priority:"High", status:"Open", projectId:pSeo.id, notes:"Manual check: est. volume 1.9k, current position ~14."},5),
+    mk("seo",{title:"Add Product schema to top 10 reviews", kind:"task", priority:"High", status:"Open", projectId:pSeo.id},7),
+    mk("seo",{title:"Electronics category — thin intro content", kind:"tech", issueType:"Duplicate content", priority:"Medium", status:"Open", targetPage:"/category/electronics", notes:"Only 2 sentences of intro. Expand to 150+ words."},9),
+    mk("seo",{title:"Homepage LCP 3.8s on mobile", kind:"tech", issueType:"LCP issue", priority:"Critical", status:"In Progress", targetPage:"/", notes:"Manual Lighthouse: hero image too large. AVIF conversion in progress."},2),
+    mk("seo",{title:"Convert 'robot vacuum review' post into cluster hub", kind:"opportunity", priority:"Medium", status:"Open", projectId:pSeo.id},11),
+    mk("seo",{title:"Improve /guides/air-fryers to page-1", kind:"page", priority:"Low", status:"Open", targetPage:"/guides/air-fryers", notes:"Manual entry: position 18 → target top 5."},13)
+  );
+
+  s.bugs.push(
+    mk("bugs",{title:"Price table overflows on small screens", severity:"High", status:"Fixing", projectId:pCat.id, pageUrl:"/price/phones", steps:"Open any price page on a 360px-wide phone.\nScroll to price table.", expected:"Table fits or scrolls within its own container.", actual:"Page scrolls horizontally; layout shifts.", browser:"Chrome 120 / Android, iPhone Safari"},1),
+    mk("bugs",{title:"Broken link: old review URL 404s", severity:"Medium", status:"Open", projectId:pSeo.id, pageUrl:"/reviews/old-keyboard", steps:"Click legacy link in newsletter archive.", expected:"Redirect to new review.", actual:"404 Not Found.", browser:"Any"},6)
+  );
+
+  s.notes.push(
+    mk("notes",{title:"Amazon affiliate disclosure rules (KSA)", category:"Business", tags:["affiliate","legal"], content:"Disclosure must be visible before the first affiliate link, not only in the footer. Use a short line above each product block.", projectId:pCont.id},5),
+    mk("notes",{title:"Image pipeline decision prep", category:"Performance", tags:["images","avif"], content:"AVIF ~30% smaller than WebP at same quality for product shots. Fallback: WebP. Tool: sharp CLI batch.", projectId:pPerf.id},3),
+    mk("notes",{title:"Category page intro copy formula", category:"SEO", tags:["copy","category"], content:"150–200 words: who it's for → what to look for (3 criteria) → link to top guide → CTA.", projectId:pCat.id},7)
+  );
+
+  s.research.push(
+    mk("research",{title:"Which category earns more RPM: electronics or home?", category:"Affiliate", projectId:pCont.id, findings:"Sampled 3 weeks of manual entries: electronics clicks 2.1x more but home converts 1.4x better per click.", conclusion:"Electronics for traffic, home for revenue per visitor. Publish both; weight home higher in the homepage.", sources:"Manual affiliate dashboard notes\nPersonal analytics export"},6),
+    mk("research",{title:"Do comparison tables help rankings?", category:"SEO", projectId:pSeo.id, findings:"Top 5 results for 8 commercial keywords all include a comparison table near the top.", conclusion:"Tables are table stakes for commercial pages. Add to the buying guide template.", sources:"Manual SERP sampling"},10)
+  );
+
+  s.goals.push(
+    mk("goals",{title:"Publish 8 pieces of content", horizon:"Short-Term", status:"Active", priority:"High", progress:38, targetDate:new Date(now+25*D).toISOString().slice(0,10), projectIds:[pCont.id], description:"2 per week for 4 weeks. Reviews and guides only — no filler."},12),
+    mk("goals",{title:"10k monthly organic visits", horizon:"Medium-Term", status:"Active", priority:"Critical", progress:22, targetDate:new Date(now+120*D).toISOString().slice(0,10), projectIds:[pSeo.id,pCont.id]},20),
+    mk("goals",{title:"YallaBuy as a top-3 Arabic buying-guide destination", horizon:"Long-Term", status:"Active", priority:"Medium", progress:8, targetDate:new Date(now+500*D).toISOString().slice(0,10), projectIds:[pSeo.id,pCont.id,pCat.id]},30)
+  );
+
+  s.decisions.push(
+    mk("decisions",{title:"Use AVIF for most product images", decision:"Ship AVIF as the default product image format with WebP fallback.", reason:"~30% smaller files, directly improves LCP on category and review pages.", alternatives:"WebP-only (bigger files); JPEG-only (worst compression).", status:"Accepted", projectId:pPerf.id},4),
+    mk("decisions",{title:"Ideas must be evaluated before becoming tasks", decision:"No idea enters the task board without explicit evaluation (score + status change to Planned).", reason:"Prevents the idea backlog from hijacking focus. The inbox captures; the evaluation step filters.", alternatives:"Auto-convert every idea (rejected: creates noise and guilt).", status:"Accepted"},9)
+  );
+
+  s.reviews.push(
+    (()=>{ const wk = now-7*D; return {id:uid("rv"), week:wk,
+      finished:"Buying guide template drafted. Affiliate plugin comparison done — decision made.",
+      notFinished:"Internal linking audit — underestimated. Carried to this week.",
+      problems:"Mobile price page bug reported by a reader. Embarrassing but useful.",
+      learned:"Comparison tables appear in every top-5 commercial result. Non-negotiable now.",
+      stop:"Starting new articles before finishing drafted ones.",
+      improve:"Batch image optimization once a week instead of ad-hoc.",
+      next3:"1. Finish Electronics category page\n2. Publish XM5 review\n3. Fix mobile price layout"}; })()
+  );
+
+  s.activity = [
+    {id:uid("a"),action:"Created",type:"bugs",title:"Price table overflows on small screens",ts:now-3600e3},
+    {id:uid("a"),action:"Status changed",type:"tasks",title:"Build Electronics Category Page: Todo → In Progress",ts:now-7200e3},
+    {id:uid("a"),action:"Created",type:"ideas",title:"Price Range Pages",ts:now-D},
+    {id:uid("a"),action:"Completed",type:"tasks",title:"Compare affiliate plugins options",ts:now-2*D},
+    {id:uid("a"),action:"Updated",type:"projects",title:"YallaBuy Category System",ts:now-2*D},
+    {id:uid("a"),action:"Created",type:"notes",title:"Category page intro copy formula",ts:now-3*D},
+    {id:uid("a"),action:"Created",type:"decisions",title:"Use AVIF for most product images",ts:now-4*D},
+  ];
+  s.tags = ["category","electronics","seo","mobile","review","images","affiliate"];
+  return s;
+}
+
+/* ================================================================
+   21. INITIALIZATION
+================================================================ */
+loadState();
+applyTheme();
+buildNav();
+router();
+window.addEventListener("hashchange", ()=>{ _detailId = null; });
+</script>
+</body>
+</html>
