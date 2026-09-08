@@ -1,6 +1,6 @@
 {
-  "name": "YallaBuy",
-  "short_name": "YallaBuy",
+  "name": "YallaBuy OS",
+  "short_name": "YallaBuy OS",
   "description": "Honest Reviews. No BS.",
   "start_url": "/",
   "display": "standalone",
@@ -20,7 +20,7 @@
       "purpose": "any"
     },
     {
-      "src": "img.png",
+      "src": "img.jpg",
       "sizes": "512x512",
       "type": "image/jpg",
       "purpose": "any"
