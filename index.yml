@@ -1,0 +1,624 @@
+YallaBuy Headphones Page
+
+AI Documentation & Structured Metadata
+
+file:
+name: "index.html"
+type: "html"
+page_type: "single-page application"
+framework: "vanilla-javascript"
+framework_dependencies: false
+title: "Headphones – Research, Compare & Buy | YallaBuy"
+author: "YallaBuy Development Team"
+creation_date: "2024-05-20"
+last_updated: "2024-05-20"
+version: "1.0.0"
+status: "production-ready"
+
+purpose:
+primary: "Headphones research, discovery, comparison, and purchase guidance page"
+philosophy: "Research first. Buy second."
+description: >
+Main YallaBuy Headphones category page designed to help users
+research headphones, discover products, compare products, and make
+informed purchase decisions without relying on traditional retail-style
+presentation.
+
+technology:
+html:
+version: "HTML5"
+approach: "semantic HTML"
+elements:
+- "header"
+- "nav"
+- "main"
+- "section"
+- "article"
+- "aside"
+- "footer"
+
+css:
+version: "CSS3"
+features:
+- "CSS Custom Properties"
+- "CSS Grid"
+- "Flexbox"
+- "Media Queries"
+- "Responsive Design"
+
+javascript:
+type: "Vanilla JavaScript"
+version: "ES6+"
+frameworks: []
+libraries: []
+
+fonts:
+provider: "Google Fonts"
+family: "Manrope"
+optimization:
+- "preconnect"
+
+images:
+lazy_loading: true
+reserved_aspect_ratio: true
+purpose:
+- "reduce CLS"
+- "prevent layout shifts"
+
+data:
+primary_source:
+file: "./data/data.json"
+format: "json"
+purpose: "headphone product catalog"
+
+loading:
+method: "Fetch API"
+function: "loadProducts"
+request: "fetch('./data/data.json')"
+dynamic: true
+
+error_handling:
+enabled: true
+behavior: "show error state and retry action"
+message: "We couldn't load the headphone catalog right now. Please try again later."
+retry: true
+
+integrity:
+fake_data: false
+generated_prices: false
+generated_ratings: false
+generated_purchase_links: false
+generated_product_details: false
+
+optional_fields:
+amazon_url:
+field: "amazonUrl"
+missing_behavior: "hide purchase button"
+
+details_url:
+  field: "detailsUrl"
+  missing_behavior: "hide details button"
+
+search_terms:
+field: "searchTerms"
+auto_generate_if_missing: true
+generated_from:
+- "name"
+- "brand"
+- "type"
+- "features"
+
+page_structure:
+
+- id: "header"
+  name: "Header"
+  type: "navigation"
+  sticky: true
+  contains:
+  
+  - "YallaBuy logo"
+  - "main navigation"
+  - "quick search access"
+  - "mobile hamburger menu"
+
+- id: "breadcrumb"
+  name: "Breadcrumb"
+  type: "navigation"
+  path:
+  
+  - "Home"
+  - "Categories"
+  - "Headphones"
+    semantic: true
+    seo_purpose: true
+
+- id: "hero"
+  name: "Hero Section"
+  type: "intro"
+  heading: "Headphones"
+  tagline: "Find the right pair for the way you listen."
+  purpose:
+  
+  - "introduce the page"
+  - "explain page purpose"
+    design_goal:
+  - "keep hero compact"
+  - "prioritize search"
+
+- id: "search"
+  name: "Search System"
+  type: "primary-discovery-mechanism"
+  importance: "primary"
+  
+  search_fields:
+  
+  - "name"
+  - "brand"
+  - "type"
+  - "features"
+  - "searchTerms"
+  
+  autocomplete:
+  enabled: true
+  custom: true
+  keyboard_navigation:
+  - "Arrow Up"
+  - "Arrow Down"
+  - "Enter"
+  - "Escape"
+  highlighting: true
+  debounce_ms: 200
+  
+  controls:
+  clear_search: true
+  dynamic_results_count: true
+  
+  empty_state:
+  enabled: true
+  behavior: "show when no products match the query"
+
+- id: "recommended-picks"
+  name: "Recommended Picks"
+  type: "editorial-product-section"
+  grid:
+  columns: 12
+  layout: "variable card sizes"
+  
+  categories:
+  
+  - "Noise Cancellation"
+  - "Battery Life"
+  - "Audiophile"
+  - "Budget"
+
+- id: "browse-by-brand"
+  name: "Browse by Brand"
+  type: "search-shortcuts"
+  
+  brands:
+  
+  - "Sony"
+  - "Bose"
+  - "Apple"
+  
+  behavior:
+  action: "populate main search input and execute search"
+  opens_filter: false
+  uses_separate_filter: false
+  
+  design_principle: "search is the primary discovery tool"
+
+- id: "what-matters"
+  name: "What Matters?"
+  type: "educational-editorial-section"
+  product_cards: false
+  
+  topics:
+  
+  - "sound quality"
+  - "noise cancellation"
+  - "battery life"
+  - "comfort"
+  - "connectivity"
+  - "microphone"
+
+- id: "product-catalog"
+  name: "Product Catalog"
+  type: "product-grid"
+  primary_content: true
+  
+  responsive_columns:
+  desktop: 4
+  tablet: 2
+  mobile: 1
+  
+  pagination:
+  method: "Load More"
+  initial_products: 12
+  increment: 12
+  infinite_scroll: false
+  
+  product_card:
+  contains:
+  - "product image"
+  - "brand"
+  - "product name"
+  - "basic specifications"
+  - "price"
+  - "purchase button"
+  - "details button"
+  
+  conditional_elements:
+  purchase_button:
+  requires: "amazonUrl"
+  
+  details_button:
+  requires: "detailsUrl"
+  
+  price_notice:
+  enabled: true
+  location: "top of product catalog"
+  purpose: "inform users that Amazon prices may change"
+  
+  loading:
+  skeleton_loader: true
+  
+  accessibility:
+  enabled: true
+
+- id: "quick-comparison"
+  name: "Quick Comparison"
+  type: "comparison-system"
+  
+  selection:
+  minimum: 2
+  maximum: 4
+  control: "checkbox"
+  
+  comparison_table:
+  responsive: true
+  mobile_behavior: "horizontal scrolling"
+  
+  fields:
+  - "price"
+  - "battery"
+  - "ANC"
+  - "weight"
+  - "connectivity"
+  
+  floating_button:
+  enabled: true
+  displays_selected_count: true
+
+- id: "how-we-evaluate"
+  name: "How We Evaluate"
+  type: "editorial-methodology"
+  
+  cards: 4
+  
+  topics:
+  
+  - "verification of numbers"
+  - "value"
+  - "editorial independence"
+  - "research methodology"
+
+- id: "headphones-guides"
+  name: "Headphones Guides"
+  type: "buying-guides"
+  
+  featured_guides: 6
+  sidebar:
+  enabled: true
+  style: "dark"
+  additional_links: true
+
+- id: "buying-guide"
+  name: "Buying Guide"
+  type: "long-form-editorial"
+  
+  table_of_contents:
+  enabled: true
+  sticky: true
+  
+  purpose:
+  
+  - "explain headphone selection"
+  - "provide detailed buying guidance"
+
+- id: "faq"
+  name: "FAQ"
+  type: "frequently-asked-questions"
+  interface: "accordion"
+  accessibility: true
+
+- id: "footer"
+  name: "Footer"
+  type: "site-footer"
+  style: "dark"
+  
+  contains:
+  
+  - "site links"
+  - "privacy policy"
+  - "Amazon affiliate disclosure"
+
+search_system:
+primary_tool: true
+
+functions:
+- "searchProducts"
+- "renderAutocomplete"
+- "handleSearchKeyboard"
+- "clearSearch"
+
+behavior:
+searches:
+- "product name"
+- "brand"
+- "type"
+- "features"
+- "search terms"
+
+debounce_ms: 200
+
+keyboard:
+  - "Arrow Up"
+  - "Arrow Down"
+  - "Enter"
+  - "Escape"
+
+highlighting: true
+dynamic_result_count: true
+empty_state: true
+clear_button: true
+
+comparison_system:
+enabled: true
+min_products: 2
+max_products: 4
+
+selection:
+method: "checkbox"
+
+comparison_fields:
+- "price"
+- "battery"
+- "ANC"
+- "weight"
+- "connectivity"
+
+mobile:
+horizontal_scroll: true
+
+floating_control:
+enabled: true
+selected_count: true
+
+seo:
+enabled: true
+
+meta:
+- "title"
+- "description"
+- "canonical"
+- "Open Graph"
+- "Twitter Card"
+
+structured_data:
+- type: "BreadcrumbList"
+purpose: "describe navigation hierarchy"
+
+- type: "FAQPage"
+  purpose: "describe FAQ content"
+
+fake_data:
+aggregate_rating: false
+fake_reviews: false
+fake_ratings: false
+
+accessibility:
+enabled: true
+
+keyboard_support:
+search: true
+autocomplete: true
+controls:
+- "Arrow Up"
+- "Arrow Down"
+- "Enter"
+- "Escape"
+
+aria:
+labels: true
+combobox: true
+buttons: true
+links: true
+
+semantic_html: true
+
+color_contrast:
+wcag_target: true
+
+performance:
+lazy_loading:
+product_images: true
+
+layout_stability:
+reserved_image_dimensions: true
+aspect_ratio: true
+goal: "reduce CLS"
+
+search:
+debounce_ms: 200
+
+dependencies:
+external_javascript_libraries: false
+jquery: false
+react: false
+vue: false
+
+motion:
+prefers_reduced_motion: true
+
+javascript:
+
+functions:
+
+- name: "loadProducts"
+  purpose:
+    - "fetch product JSON"
+    - "process product data"
+    - "handle loading errors"
+  source: "./data/data.json"
+
+- name: "initializeSearch"
+  purpose:
+    - "initialize search event listeners"
+    - "initialize autocomplete"
+    - "initialize search controls"
+
+- name: "searchProducts"
+  parameters:
+    - "query"
+  purpose:
+    - "filter products"
+    - "return matching products"
+    - "render search results"
+
+- name: "renderAutocomplete"
+  parameters:
+    - "query"
+  purpose:
+    - "build autocomplete suggestions"
+    - "display matching suggestions"
+
+- name: "handleSearchKeyboard"
+  parameters:
+    - "event"
+  purpose:
+    - "handle keyboard navigation"
+    - "control autocomplete selection"
+
+  supported_keys:
+    - "Arrow Up"
+    - "Arrow Down"
+    - "Enter"
+    - "Escape"
+
+- name: "clearSearch"
+  purpose:
+    - "clear search input"
+    - "restore full product catalog"
+    - "reset search state"
+
+- name: "renderProducts"
+  purpose:
+    - "build product grid"
+    - "render product cards"
+    - "manage visible product count"
+    - "handle skeleton loading"
+
+- name: "createProductCard"
+  parameters:
+    - "product"
+  purpose:
+    - "generate product card HTML"
+    - "display product information"
+    - "conditionally display purchase button"
+    - "conditionally display details button"
+
+- name: "initializeComparison"
+  purpose:
+    - "initialize comparison system"
+    - "manage selected products"
+    - "update comparison table"
+    - "update selected product count"
+
+- name: "loadMoreProducts"
+  purpose:
+    - "increase visible product count"
+  increment: 12
+
+- name: "showError"
+  purpose:
+    - "display product loading error"
+    - "provide retry action"
+
+dependencies:
+
+direct:
+- "./data/data.json"
+
+technologies:
+- "HTML5"
+- "CSS3"
+- "Vanilla JavaScript ES6+"
+
+external:
+fonts:
+- "Google Fonts / Manrope"
+
+architecture:
+type: "client-side dynamic rendering"
+
+flow:
+- "index.html loads"
+- "JavaScript initializes"
+- "loadProducts() executes"
+- "data.json is fetched"
+- "product data is processed"
+- "products are rendered"
+- "search is initialized"
+- "comparison is initialized"
+- "user can search"
+- "user can browse"
+- "user can compare"
+
+relationships:
+
+index_html:
+uses:
+- "JavaScript"
+- "CSS"
+
+javascript:
+reads:
+- "./data/data.json"
+
+controls:
+  - "search"
+  - "autocomplete"
+  - "product rendering"
+  - "load more"
+  - "comparison"
+  - "error handling"
+
+data_json:
+provides:
+- "product data"
+- "product information"
+- "product links"
+- "product attributes"
+
+user:
+interactions:
+- "search"
+- "autocomplete"
+- "browse by brand"
+- "load more"
+- "select products"
+- "compare products"
+- "read buying guides"
+- "read FAQ"
+
+principles:
+
+- "Research first. Buy second."
+- "No fabricated product data."
+- "No fake ratings or reviews."
+- "Search is the primary product discovery mechanism."
+- "Progressive product loading instead of infinite scroll."
+- "Accessibility should be built into the interface."
+- "Performance and layout stability are priorities."
+- "Editorial information should help users make informed decisions."
