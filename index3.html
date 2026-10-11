@@ -1,158 +1,1088 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THØR Weather</title>
+  <meta name="theme-color" content="#f8f5ef">
+
+  <title>THØR — Weather Product Discovery</title>
 
   <style>
+    :root {
+      --bg: #f8f5ef;
+      --surface: #fffdf9;
+      --text: #282821;
+      --muted: #77756c;
+      --accent: #c96140;
+      --border: #e7e0d5;
+      --radius: 18px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
       font-family: Arial, sans-serif;
-      background: #f8f3eb;
-      color: #292820;
     }
 
-    .weather-card {
-      max-width: 360px;
-      margin: 40px auto;
-      padding: 24px;
-      border: 1px solid #e5dbcd;
-      border-radius: 20px;
-      background: #fffdf9;
-    }
-
-    h1 {
-      font-size: 22px;
+    button, input {
+      font: inherit;
     }
 
     button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 12px;
-      border: 0;
-      border-radius: 10px;
-      background: #c65e3d;
-      color: white;
-      font-size: 15px;
       cursor: pointer;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin-inline: auto;
     }
 
-    #status {
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .header-inner {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .header-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main {
+      padding-block: 38px 64px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .intro {
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+
+    h1, h2, h3, p {
+      overflow-wrap: anywhere;
+    }
+
+    h1 {
+      margin: 12px 0;
+      font-family: Georgia, serif;
+      font-size: clamp(32px, 6vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      font-weight: 500;
+    }
+
+    .intro p {
+      max-width: 540px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* Weather widget */
+
+    .weather-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      margin-bottom: 42px;
+    }
+
+    .weather-card h2 {
+      margin: 8px 0;
+      font-size: 22px;
+    }
+
+    .weather-card p {
+      color: var(--muted);
       font-size: 14px;
       line-height: 1.6;
     }
 
-    #temperature {
-      font-size: 48px;
-      margin: 20px 0 8px;
+    .weather-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--text);
+      font-size: 15px;
+      margin-top: 5px;
+    }
+
+    .temperature {
+      font-family: Georgia, serif;
+      font-size: 55px;
+      white-space: nowrap;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 15px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+    }
+
+    .button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .weather-card .button {
+      margin-top: 8px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Product discovery */
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+      font-family: Georgia, serif;
+      font-weight: 500;
+      font-size: 30px;
+      margin: 7px 0;
+    }
+
+    .result-count {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .search-wrap span {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 20px;
+      pointer-events: none;
+    }
+
+    #product-search {
+      width: 100%;
+      padding: 15px 16px 15px 45px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+
+    #product-search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px #c961401c;
+    }
+
+    /* Horizontally scrollable category tabs */
+
+    .tabs {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding: 2px 0 14px;
+      margin-bottom: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: #d6cabb transparent;
+      overscroll-behavior-inline: contain;
+      scroll-snap-type: x proximity;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      padding: 11px 17px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--surface);
+      color: var(--muted);
+      white-space: nowrap;
+      transition: background .2s, color .2s;
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--text);
+      border-color: var(--text);
+      color: white;
+    }
+
+    .tab:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #c9614070;
+      outline-offset: 3px;
+    }
+
+    /* Product cards */
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-image {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      padding: 12px;
+      background: #f0ece4;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .product-badge {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      background: #fffdf9eF;
+      color: #8d472f;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .product-info {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex: 1;
+    }
+
+    .product-category {
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .product-info h3 {
+      font-size: 16px;
+      line-height: 1.4;
+      margin: 9px 0;
+    }
+
+    .product-info p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 0 0 14px;
+    }
+
+    .product-link {
+      display: inline-block;
+      margin-top: auto;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .product-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 20px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 22px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: min(100% - 24px, 1120px);
+      }
+
+      main {
+        padding-top: 28px;
+      }
+
+      .header-note {
+        font-size: 11px;
+      }
+
+      .weather-card {
+        grid-template-columns: 1fr;
+        padding: 19px;
+        gap: 8px;
+      }
+
+      .weather-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .temperature {
+        font-size: 46px;
+      }
+
+      .weather-stats {
+        gap: 14px;
+      }
+
+      .section-heading h2 {
+        font-size: 26px;
+      }
+
+      .products-grid {
+        gap: 10px;
+      }
+
+      .product-info {
+        padding: 11px;
+      }
+
+      .product-info h3 {
+        font-size: 14px;
+      }
+
+      .product-info p {
+        font-size: 11px;
+      }
+
+      .product-badge {
+        font-size: 9px;
+        left: 6px;
+        top: 6px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="weather-card">
-    <h1>Local Weather</h1>
-    <p>Check the weather at your current location.</p>
+  <header>
+    <div class="container header-inner">
+      <div class="logo">TH<span>Ø</span>R</div>
+      <div class="header-note">Research first. Buy second.</div>
+    </div>
+  </header>
 
-    <button id="location-btn">
-      Use my current location
-    </button>
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Weather-powered discovery</div>
+      <h1>Find the right gear for your day.</h1>
+      <p>
+        Explore audio gear and useful accessories.
+        Get optional suggestions based on your local weather,
+        then search and browse the categories.
+      </p>
+    </section>
 
-    <p id="status" role="status" aria-live="polite">
-      Press the button to get started.
-    </p>
+    <section class="weather-card" aria-labelledby="weather-heading">
+      <div>
+        <div class="eyebrow">Your local conditions</div>
+        <h2 id="weather-heading">Discover for your day</h2>
 
-    <section id="weather" hidden>
-      <div id="temperature"></div>
-      <p id="details"></p>
+        <p id="weather-status" class="status" role="status"
+           aria-live="polite">
+          Use your location to load current weather.
+        </p>
+
+        <div class="weather-stats" id="weather-stats" hidden>
+          <div class="stat">
+            Humidity
+            <strong id="humidity">—</strong>
+          </div>
+          <div class="stat">
+            Feels like
+            <strong id="feels-like">—</strong>
+          </div>
+          <div class="stat">
+            Wind
+            <strong id="wind">—</strong>
+          </div>
+        </div>
+
+        <button class="button" id="location-button">
+          Use my current location
+        </button>
+      </div>
+
+      <div class="weather-summary">
+        <div class="temperature" id="temperature">—°</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="products-heading">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">Explore the collection</div>
+          <h2 id="products-heading">Find your gear.</h2>
+        </div>
+        <span class="result-count" id="result-count"></span>
+      </div>
+
+      <div class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input
+          id="product-search"
+          type="search"
+          placeholder="Search products, brands, features..."
+          autocomplete="off"
+          aria-label="Search products"
+        >
+      </div>
+
+      <div class="tabs" id="category-tabs"
+           role="tablist" aria-label="Product categories">
+      </div>
+
+      <div class="products-grid" id="products-grid"
+           aria-live="polite">
+      </div>
+
+      <p class="disclaimer">
+        Weather suggestions are optional discovery ideas, not guarantees
+        of product suitability. Always verify product specifications.
+        Weather data provided by Open-Meteo.
+      </p>
     </section>
   </main>
 
-  <script>
-    const button = document.querySelector("#location-btn");
-    const status = document.querySelector("#status");
-    const weather = document.querySelector("#weather");
-    const temperature = document.querySelector("#temperature");
-    const details = document.querySelector("#details");
+  <footer>
+    <div class="container">
+      THØR — Product discovery, guided by your needs.
+    </div>
+  </footer>
 
-    button.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        status.textContent =
-          "Your browser does not support location access.";
+  <script>
+    // ----------------------------------------
+    // 1. DEMO PRODUCT DATA
+    // Later, this array can move to products.json.
+    // All products here are fictional examples.
+    // ----------------------------------------
+
+    const products = [
+      {
+        id: "headphones-001",
+        name: "Everyday Wireless Headphones",
+        brand: "North Audio",
+        category: "headphones",
+        description: "Wireless listening for work and daily use.",
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: true,
+          outdoorUse: true,
+          sweatResistance: false,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "headphones-002",
+        name: "Travel ANC Headphones",
+        brand: "Soundway",
+        category: "headphones",
+        description: "A travel-focused example with noise cancellation.",
+        image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: true,
+          outdoorUse: true,
+          sweatResistance: false,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "headphones-003",
+        name: "Studio Over-Ear Headphones",
+        brand: "Tone Lab",
+        category: "headphones",
+        description: "An example for focused listening at home.",
+        image: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: false,
+          outdoorUse: false,
+          sweatResistance: false,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "earbuds-001",
+        name: "Sport Wireless Earbuds",
+        brand: "Motion Audio",
+        category: "earbuds",
+        description: "Example earbuds with documented sweat resistance.",
+        image: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: false,
+          outdoorUse: true,
+          sweatResistance: true,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "earbuds-002",
+        name: "Everyday Compact Earbuds",
+        brand: "Pocket Sound",
+        category: "earbuds",
+        description: "Compact wireless listening for daily routines.",
+        image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: true,
+          outdoorUse: true,
+          sweatResistance: false,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "earbuds-003",
+        name: "Outdoor Water-Resistant Earbuds",
+        brand: "Trail Audio",
+        category: "earbuds",
+        description: "Example earbuds with a verified water-resistance rating.",
+        image: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=600&auto=format&fit=crop&q=80",
+        features: {
+          noiseCancellation: false,
+          outdoorUse: true,
+          sweatResistance: true,
+          waterResistance: true
+        },
+        status: "published"
+      },
+      {
+        id: "speakers-001",
+        name: "Portable Bluetooth Speaker",
+        brand: "Roam Audio",
+        category: "speakers",
+        description: "Portable audio for everyday listening.",
+        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: true,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "speakers-002",
+        name: "Outdoor Water-Resistant Speaker",
+        brand: "Trail Sound",
+        category: "speakers",
+        description: "Example portable speaker with a verified protection rating.",
+        image: "https://images.unsplash.com/photo-1589003077984-894e133dabab?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: true,
+          waterResistance: true
+        },
+        status: "published"
+      },
+      {
+        id: "speakers-003",
+        name: "Desktop Bluetooth Speaker",
+        brand: "Desk Audio",
+        category: "speakers",
+        description: "Compact audio for desks and smaller rooms.",
+        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: false,
+          waterResistance: false
+        },
+        status: "published"
+      },
+      {
+        id: "accessories-001",
+        name: "Compact USB-C Power Bank",
+        brand: "ChargeKit",
+        category: "accessories",
+        description: "A portable charging option for travel days.",
+        image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: true
+        },
+        status: "published"
+      },
+      {
+        id: "accessories-002",
+        name: "USB-C Charging Cable",
+        brand: "Everyday Tech",
+        category: "accessories",
+        description: "A practical charging accessory.",
+        image: "https://images.unsplash.com/photo-1615526675159-e248c3021d3f?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: true
+        },
+        status: "published"
+      },
+      {
+        id: "accessories-003",
+        name: "Travel Audio Case",
+        brand: "Carry Audio",
+        category: "accessories",
+        description: "A protective case for compatible audio gear.",
+        image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&auto=format&fit=crop&q=80",
+        features: {
+          outdoorUse: true
+        },
+        status: "published"
+      }
+    ];
+
+    // ----------------------------------------
+    // 2. DEMO WEATHER RULES
+    // Later, this object can move to weather-rules.json.
+    // ----------------------------------------
+
+    const weatherRules = [
+      {
+        id: "hot-weather",
+        title: "Warm-day discovery",
+        description:
+          "Explore outdoor audio options. Check comfort and sweat-resistance specifications.",
+        matches: product =>
+          product.category === "earbuds" &&
+          product.features.sweatResistance === true &&
+          product.features.outdoorUse === true,
+        condition: weather =>
+          weather.temperature_2m >= 30
+      },
+      {
+        id: "rainy-weather",
+        title: "Rain-aware discovery",
+        description:
+          "Explore products with verified water-resistance ratings. Check their specific protection limits.",
+        matches: product =>
+          product.features.waterResistance === true &&
+          product.features.outdoorUse === true,
+        condition: weather =>
+          weather.precipitation > 0 ||
+          [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99]
+            .includes(weather.weather_code)
+      },
+      {
+        id: "windy-weather",
+        title: "Windy-day discovery",
+        description:
+          "Explore audio options for outdoor use. Check wind-noise performance before choosing.",
+        matches: product =>
+          product.category === "headphones" &&
+          product.features.noiseCancellation === true &&
+          product.features.outdoorUse === true,
+        condition: weather =>
+          weather.wind_speed_10m >= 25
+      }
+    ];
+
+    const categories = [
+      { id: "all", label: "All products" },
+      { id: "headphones", label: "Headphones" },
+      { id: "earbuds", label: "Earbuds" },
+      { id: "speakers", label: "Speakers" },
+      { id: "accessories", label: "Accessories" }
+    ];
+
+    // ----------------------------------------
+    // 3. APP STATE
+    // ----------------------------------------
+
+    let activeCategory = "all";
+    let searchQuery = "";
+    let currentWeather = null;
+    let recommendedIds = new Set();
+    let activeWeatherRule = null;
+
+    const tabsContainer = document.querySelector("#category-tabs");
+    const productsGrid = document.querySelector("#products-grid");
+    const searchInput = document.querySelector("#product-search");
+    const resultCount = document.querySelector("#result-count");
+
+    const weatherStatus = document.querySelector("#weather-status");
+    const locationButton = document.querySelector("#location-button");
+
+    // ----------------------------------------
+    // 4. CATEGORY TABS
+    // ----------------------------------------
+
+    function renderTabs() {
+      tabsContainer.replaceChildren();
+
+      categories.forEach(category => {
+        const button = document.createElement("button");
+
+        button.className = "tab";
+        button.type = "button";
+        button.textContent = category.label;
+        button.setAttribute("role", "tab");
+        button.setAttribute(
+          "aria-selected",
+          String(activeCategory === category.id)
+        );
+
+        button.addEventListener("click", () => {
+          activeCategory = category.id;
+          renderTabs();
+          renderProducts();
+        });
+
+        tabsContainer.append(button);
+      });
+    }
+
+    // ----------------------------------------
+    // 5. APPLY WEATHER RULES
+    // ----------------------------------------
+
+    function updateWeatherRecommendations(weather) {
+      recommendedIds = new Set();
+      activeWeatherRule = null;
+
+      if (!weather) {
         return;
       }
 
-      button.disabled = true;
-      status.textContent = "Getting your location...";
-      weather.hidden = true;
+      // Pick the first matching rule.
+      // Rule order determines priority in this demo.
+      const matchedRule = weatherRules.find(rule =>
+        rule.condition(weather)
+      );
+
+      if (!matchedRule) {
+        return;
+      }
+
+      activeWeatherRule = matchedRule;
+
+      products
+        .filter(product =>
+          product.status === "published" &&
+          matchedRule.matches(product)
+        )
+        .forEach(product => {
+          recommendedIds.add(product.id);
+        });
+    }
+
+    // ----------------------------------------
+    // 6. FILTER PRODUCTS
+    // Search + category + weather-based sorting
+    // ----------------------------------------
+
+    function getVisibleProducts() {
+      const query = searchQuery.trim().toLowerCase();
+
+      return products
+        .filter(product => product.status === "published")
+        .filter(product =>
+          activeCategory === "all" ||
+          product.category === activeCategory
+        )
+        .filter(product => {
+          const searchableText = [
+            product.name,
+            product.brand,
+            product.category,
+            product.description,
+            ...Object.keys(product.features).filter(key =>
+              product.features[key] === true
+            )
+          ].join(" ").toLowerCase();
+
+          return searchableText.includes(query);
+        })
+        .sort((a, b) => {
+          return Number(recommendedIds.has(b.id)) -
+                 Number(recommendedIds.has(a.id));
+        });
+    }
+
+    // ----------------------------------------
+    // 7. SAFE PRODUCT CARD RENDERING
+    // ----------------------------------------
+
+    function renderProducts() {
+      const visibleProducts = getVisibleProducts();
+
+      productsGrid.replaceChildren();
+
+      resultCount.textContent =
+        `${visibleProducts.length} products`;
+
+      if (visibleProducts.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent =
+          "No products found. Try another search or category.";
+        productsGrid.append(empty);
+        return;
+      }
+
+      visibleProducts.forEach(product => {
+        const card = document.createElement("article");
+        card.className = "product-card";
+
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "product-image";
+
+        const image = document.createElement("img");
+        image.src = product.image;
+        image.alt = product.name;
+        image.loading = "lazy";
+        image.decoding = "async";
+
+        image.addEventListener("error", () => {
+          imageWrap.textContent = "Image unavailable";
+          imageWrap.style.display = "grid";
+          imageWrap.style.placeItems = "center";
+          imageWrap.style.fontSize = "12px";
+        }, { once: true });
+
+        imageWrap.append(image);
+
+        if (recommendedIds.has(product.id)) {
+          const badge = document.createElement("span");
+          badge.className = "product-badge";
+          badge.textContent = "Weather match";
+          imageWrap.append(badge);
+        }
+
+        const info = document.createElement("div");
+        info.className = "product-info";
+
+        const category = document.createElement("span");
+        category.className = "product-category";
+        category.textContent = product.category;
+
+        const title = document.createElement("h3");
+        title.textContent = product.name;
+
+        const description = document.createElement("p");
+        description.textContent = product.description;
+
+        const link = document.createElement("a");
+        link.className = "product-link";
+        link.href = "#";
+        link.textContent = "Demo product";
+        link.setAttribute("aria-label", `Demo: ${product.name}`);
+
+        info.append(category, title, description, link);
+        card.append(imageWrap, info);
+        productsGrid.append(card);
+      });
+    }
+
+    // ----------------------------------------
+    // 8. WEATHER API + CURRENT LOCATION
+    // ----------------------------------------
+
+    function getWeatherDescription(code) {
+      if (code === 0) return "Clear sky";
+      if ([1, 2].includes(code)) return "Mainly clear / partly cloudy";
+      if (code === 3) return "Overcast";
+      if ([45, 48].includes(code)) return "Foggy";
+      if ([51, 53, 55, 56, 57].includes(code)) return "Drizzle";
+      if ([61, 63, 65, 66, 67].includes(code)) return "Rain";
+      if ([71, 73, 75, 77].includes(code)) return "Snow";
+      if ([80, 81, 82].includes(code)) return "Rain showers";
+      if ([85, 86].includes(code)) return "Snow showers";
+      if ([95, 96, 99].includes(code)) return "Thunderstorm";
+      return "Current conditions";
+    }
+
+    async function loadWeather(latitude, longitude) {
+      const params = new URLSearchParams({
+        latitude,
+        longitude,
+        current:
+          "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code",
+        timezone: "auto"
+      });
+
+      const response = await fetch(
+        `https://api.open-meteo.com/v1/forecast?${params}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Weather request failed");
+      }
+
+      const data = await response.json();
+
+      if (!data.current) {
+        throw new Error("Weather data unavailable");
+      }
+
+      return data.current;
+    }
+
+    function showWeather(weather) {
+      document.querySelector("#temperature").textContent =
+        `${Math.round(weather.temperature_2m)}°C`;
+
+      document.querySelector("#humidity").textContent =
+        `${weather.relative_humidity_2m}%`;
+
+      document.querySelector("#feels-like").textContent =
+        `${Math.round(weather.apparent_temperature)}°C`;
+
+      document.querySelector("#wind").textContent =
+        `${weather.wind_speed_10m} km/h`;
+
+      document.querySelector("#weather-stats").hidden = false;
+
+      weatherStatus.textContent =
+        `${getWeatherDescription(weather.weather_code)} · ` +
+        `Weather code ${weather.weather_code}`;
+
+      currentWeather = weather;
+      updateWeatherRecommendations(weather);
+      renderProducts();
+    }
+
+    locationButton.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        weatherStatus.textContent =
+          "Geolocation is not supported by this browser.";
+        return;
+      }
+
+      locationButton.disabled = true;
+      weatherStatus.textContent = "Getting your location...";
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-
+        async position => {
           try {
-            status.textContent = "Loading weather data...";
+            weatherStatus.textContent = "Loading local weather...";
 
-            const params = new URLSearchParams({
-              latitude,
-              longitude,
-              current:
-                "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m",
-              timezone: "auto"
-            });
-
-            const response = await fetch(
-              `https://api.open-meteo.com/v1/forecast?${params}`
+            const weather = await loadWeather(
+              position.coords.latitude,
+              position.coords.longitude
             );
 
-            if (!response.ok) {
-              throw new Error("Weather request failed");
-            }
-
-            const data = await response.json();
-            const current = data.current;
-
-            temperature.textContent =
-              `${Math.round(current.temperature_2m)}°C`;
-
-            details.textContent =
-              `Feels like ${Math.round(current.apparent_temperature)}°C · ` +
-              `Humidity ${current.relative_humidity_2m}% · ` +
-              `Wind ${current.wind_speed_10m} km/h`;
-
-            weather.hidden = false;
-            status.textContent = "Weather updated successfully.";
+            showWeather(weather);
           } catch (error) {
-            status.textContent =
-              "Could not load weather. Please try again.";
             console.error(error);
+            weatherStatus.textContent =
+              "Could not load weather. Please try again.";
           } finally {
-            button.disabled = false;
+            locationButton.disabled = false;
           }
         },
 
-        (error) => {
+        error => {
           const messages = {
-            1: "Location permission was denied. Allow access or choose a city manually.",
-            2: "Your location is unavailable. Please try again.",
+            1: "Location permission denied. You can still browse all products.",
+            2: "Location unavailable. Please try again.",
             3: "Location request timed out. Please try again."
           };
 
-          status.textContent =
-            messages[error.code] || "Could not get your location.";
+          weatherStatus.textContent =
+            messages[error.code] ||
+            "Could not get your location.";
 
-          button.disabled = false;
+          locationButton.disabled = false;
         },
 
         {
@@ -162,6 +1092,23 @@
         }
       );
     });
+
+    // ----------------------------------------
+    // 9. SEARCH
+    // ----------------------------------------
+
+    searchInput.addEventListener("input", event => {
+      searchQuery = event.target.value;
+      renderProducts();
+    });
+
+    // ----------------------------------------
+    // 10. INITIAL RENDER
+    // Products work even before location is granted.
+    // ----------------------------------------
+
+    renderTabs();
+    renderProducts();
   </script>
 </body>
 </html>
